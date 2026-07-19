@@ -14,14 +14,21 @@
     <div class="card shadow-sm border-0 mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('tasks.index') }}" class="row g-3">
-                <div class="col-md-8 col-12">
+                <div class="col-md-6 col-12">
                     <input type="text" name="search" class="form-control" placeholder="Search tasks by title..." value="{{ request('search') }}">
                 </div>
-                <div class="col-md-2 col-6">
-                    <button type="submit" class="btn btn-primary  w-100 fw-semibold">Search</button>
+                <div class="col-md-2 col-12">
+                    <select name="filter" class="form-select" onchange="this.form.submit()">
+                        <option value="" {{ request('filter') === '' ? 'selected' : '' }}>All Statuses</option>
+                        <option value="completed" {{ request('filter') === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="pending" {{ request('filter') === 'pending' ? 'selected' : '' }}>Pending</option>
+                    </select>
                 </div>
                 <div class="col-md-2 col-6">
-                    <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary  w-100 fw-semibold">Reset</a>
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold">Search</button>
+                </div>
+                <div class="col-md-2 col-6">
+                    <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary w-100 fw-semibold">Reset</a>
                 </div>
             </form>
         </div>

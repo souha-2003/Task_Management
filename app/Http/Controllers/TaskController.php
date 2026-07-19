@@ -14,11 +14,14 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        // Get all tasks of the currently authenticated user with search support by title
-        $query = auth()->user()->tasks();
+        // Get all tasks of the currently authenticated user with search and filter support
+        $query = auth()->user()->tasks()
+            ->search($request->search);
 
-        if ($request->has('search') && !empty($request->search)) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+        if ($request->filter === 'completed') {
+            $query->completed();
+        } elseif ($request->filter === 'pending') {
+            $query->pending();
         }
 
         // Order tasks by latest and paginate (5 tasks per page)
