@@ -66,17 +66,11 @@
                 <div class="container">
                     <!-- Global Flash Messages -->
                     @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
+                        <x-flash type="success" :message="session('success')" />
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert">
-                            {{ session('error') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
+                        <x-flash type="danger" :message="session('error')" />
                     @endif
 
                     {{ $slot }}

@@ -38,7 +38,7 @@
 
                     <!-- Categories -->
                     <div class="mb-4">
-                        <h4 class="text-secondary small text-uppercase fw-bold mb-1">Categories / التصنيفات</h4>
+                        <h4 class="text-secondary small text-uppercase fw-bold mb-1">Categories</h4>
                         <div>
                             @forelse ($task->categories as $category)
                                 <span class="badge bg-{{ $category->color }} fs-6 px-3 py-2 rounded-pill me-1 mb-1">{{ $category->name }}</span>

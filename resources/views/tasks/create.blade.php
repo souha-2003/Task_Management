@@ -36,7 +36,7 @@
 
                         <!-- Categories -->
                         <div class="mb-4">
-                            <x-input-label value="Categories / التصنيفات" />
+                            <x-input-label value="Categories" />
                             <div class="d-flex flex-wrap gap-3 mt-2">
                                 @foreach ($categories as $category)
                                     <div class="form-check">
