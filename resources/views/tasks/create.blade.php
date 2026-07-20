@@ -34,6 +34,22 @@
                             <x-input-error :messages="$errors->get('note')" />
                         </div>
 
+                        <!-- Categories -->
+                        <div class="mb-4">
+                            <x-input-label value="Categories / التصنيفات" />
+                            <div class="d-flex flex-wrap gap-3 mt-2">
+                                @foreach ($categories as $category)
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="categories[]" id="category_{{ $category->id }}" value="{{ $category->id }}" {{ is_array(old('categories')) && in_array($category->id, old('categories')) ? 'checked' : '' }}>
+                                        <label class="form-check-label fw-medium text-dark" for="category_{{ $category->id }}">
+                                            <span class="badge bg-{{ $category->color }} px-2 py-1">{{ $category->name }}</span>
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <x-input-error :messages="$errors->get('categories')" />
+                        </div>
+
                         <!-- Submit Buttons -->
                         <div class="d-flex justify-content-end gap-2">
                             <a href="{{ route('tasks.index') }}" class="btn btn-light px-4 fw-semibold border">

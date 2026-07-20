@@ -14,8 +14,9 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        // Get all tasks of the currently authenticated user with search and filter support
+        // Get all tasks of the currently authenticated user with search and filter support (eager load categories)
         $query = auth()->user()->tasks()
+            ->with('categories')
             ->search($request->search);
 
         if ($request->filter === 'completed') {
@@ -35,7 +36,8 @@ class TaskController extends Controller
      */
     public function create()
     {
-        return view('tasks.create');
+        $categories = \App\Models\Category::all();
+        return view('tasks.create', compact('categories'));
     }
 
     /**
@@ -47,7 +49,12 @@ class TaskController extends Controller
         $validated = $request->validated();
 
         // Create the task associated with the current user
-        auth()->user()->tasks()->create($validated);
+        $task = auth()->user()->tasks()->create($validated);
+
+        // Sync categories associated with the task
+        if (isset($validated['categories'])) {
+            $task->categories()->sync($validated['categories']);
+        }
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
     }
@@ -57,10 +64,11 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // Verify that the task belongs to the current user
-        if ($task->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Verify that the task belongs to the current user using Policy
+        \Illuminate\Support\Facades\Gate::authorize('view', $task);
+
+        // Load the associated categories
+        $task->load('categories');
 
         return view('tasks.show', compact('task'));
     }
@@ -70,12 +78,12 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        // Verify that the task belongs to the current user
-        if ($task->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Verify that the task belongs to the current user using Policy
+        \Illuminate\Support\Facades\Gate::authorize('update', $task);
 
-        return view('tasks.edit', compact('task'));
+        $categories = \App\Models\Category::all();
+
+        return view('tasks.edit', compact('task', 'categories'));
     }
 
     /**
@@ -91,6 +99,9 @@ class TaskController extends Controller
         // Update the task details
         $task->update($validated);
 
+        // Sync the categories
+        $task->categories()->sync($request->categories ?? []);
+
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
@@ -99,10 +110,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        // Verify that the task belongs to the current user
-        if ($task->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Verify that the task belongs to the current user using Policy
+        \Illuminate\Support\Facades\Gate::authorize('delete', $task);
 
         // Delete the task
         $task->delete();
@@ -115,10 +124,8 @@ class TaskController extends Controller
      */
     public function toggle(Task $task)
     {
-        // Verify that the task belongs to the current user
-        if ($task->user_id !== auth()->id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Verify that the task belongs to the current user using Policy
+        \Illuminate\Support\Facades\Gate::authorize('update', $task);
 
         // Toggle the completed status
         $task->update([

@@ -68,4 +68,12 @@ class Task extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the categories associated with this task.
+     */
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
 }

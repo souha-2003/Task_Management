@@ -63,7 +63,14 @@
                         <tbody>
                             @foreach ($tasks as $task)
                                 <tr>
-                                    <td class="px-4 fw-bold text-dark">{{ $task->title }}</td>
+                                    <td class="px-4 fw-bold text-dark">
+                                        <div>{{ $task->title }}</div>
+                                        <div class="mt-1 d-flex flex-wrap gap-1">
+                                            @foreach ($task->categories as $category)
+                                                <span class="badge bg-{{ $category->color }} font-monospace" style="font-size: 0.7rem;">{{ $category->name }}</span>
+                                            @endforeach
+                                        </div>
+                                    </td>
                                     <td class="text-muted" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         {{ $task->description }}
                                     </td>

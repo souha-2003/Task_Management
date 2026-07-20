@@ -15,8 +15,8 @@ class UpdateTaskRequest extends FormRequest
         // Get the Task model bound from the route (e.g. /tasks/{task})
         $task = $this->route('task');
 
-        // Allow update only if task exists and belongs to the currently logged in user
-        return $task && $task->user_id === $this->user()->id;
+        // Check if the user is authorized to update this task using TaskPolicy
+        return $task && $this->user()->can('update', $task);
     }
 
     /**
@@ -43,6 +43,8 @@ class UpdateTaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'note' => 'nullable|string',
+            'categories' => 'nullable|array',
+            'categories.*' => 'exists:categories,id',
         ];
     }
 
