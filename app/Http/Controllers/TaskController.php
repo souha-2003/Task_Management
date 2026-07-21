@@ -3,135 +3,111 @@
 namespace App\Http\Controllers;
 
 use App\Models\Task;
+use App\Models\Category;
+use App\Services\TaskService;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class TaskController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * حقن TaskService في الكنترولر
+     */
+    public function __construct(
+        protected TaskService $taskService
+    ) {}
+
+    /**
+     * عرض قائمة المهام.
      */
     public function index(Request $request)
     {
-        // Get all tasks of the currently authenticated user with search and filter support (eager load categories)
-        $query = auth()->user()->tasks()
-            ->with('categories')
-            ->search($request->search);
-
-        if ($request->filter === 'completed') {
-            $query->completed();
-        } elseif ($request->filter === 'pending') {
-            $query->pending();
-        }
-
-        // Order tasks by latest and paginate (5 tasks per page)
-        $tasks = $query->latest()->paginate(5)->withQueryString();
+        $tasks = $this->taskService->getPaginatedTasksForUser(
+            auth()->user(),
+            $request->search,
+            $request->filter
+        );
 
         return view('tasks.index', compact('tasks'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * عرض نموذج إنشاء مهمة جديدة.
      */
     public function create()
     {
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
         return view('tasks.create', compact('categories'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * حفظ المهمة الجديدة في قاعدة البيانات.
      */
     public function store(StoreTaskRequest $request)
     {
-        // Get already validated and sanitized data from StoreTaskRequest
-        $validated = $request->validated();
-
-        // Create the task associated with the current user
-        $task = auth()->user()->tasks()->create($validated);
-
-        // Sync categories associated with the task
-        if (isset($validated['categories'])) {
-            $task->categories()->sync($validated['categories']);
-        }
+        $this->taskService->createTask(auth()->user(), $request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
     }
 
     /**
-     * Display the specified resource.
+     * عرض تفاصيل المهمة.
      */
     public function show(Task $task)
     {
-        // Verify that the task belongs to the current user using Policy
-        \Illuminate\Support\Facades\Gate::authorize('view', $task);
+        Gate::authorize('view', $task);
 
-        // Load the associated categories
         $task->load('categories');
 
         return view('tasks.show', compact('task'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * عرض نموذج تعديل المهمة.
      */
     public function edit(Task $task)
     {
-        // Verify that the task belongs to the current user using Policy
-        \Illuminate\Support\Facades\Gate::authorize('update', $task);
+        Gate::authorize('update', $task);
 
-        $categories = \App\Models\Category::all();
+        $categories = Category::all();
 
         return view('tasks.edit', compact('task', 'categories'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * تحديث بيانات المهمة.
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // Note: Task ownership authorization is handled automatically in UpdateTaskRequest::authorize()
-
-        // Get already validated and sanitized data from UpdateTaskRequest
-        $validated = $request->validated();
-
-        // Update the task details
-        $task->update($validated);
-
-        // Sync the categories
-        $task->categories()->sync($request->categories ?? []);
+        $this->taskService->updateTask($task, $request->validated());
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * حذف المهمة.
      */
     public function destroy(Task $task)
     {
-        // Verify that the task belongs to the current user using Policy
-        \Illuminate\Support\Facades\Gate::authorize('delete', $task);
+        Gate::authorize('delete', $task);
 
-        // Delete the task
-        $task->delete();
+        $this->taskService->deleteTask($task);
 
         return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
     }
 
     /**
-     * Toggle the completed status of the specified task.
+     * تبديل حالة التناوب للمهمة (مكتملة / غير مكتملة).
      */
     public function toggle(Task $task)
     {
-        // Verify that the task belongs to the current user using Policy
-        \Illuminate\Support\Facades\Gate::authorize('update', $task);
+        Gate::authorize('update', $task);
 
-        // Toggle the completed status
-        $task->update([
-            'completed' => !$task->completed
-        ]);
+        $this->taskService->toggleTaskStatus($task);
 
         return redirect()->back()->with('success', 'Task status updated successfully!');
     }
 }
+
