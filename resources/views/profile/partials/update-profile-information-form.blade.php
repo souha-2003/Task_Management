@@ -47,6 +47,12 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="secret_note" :value="__('Secret Note')" />
+            <x-text-input id="secret_note" name="secret_note" type="text" class="mt-1 block w-full" :value="old('secret_note', $user->secret_note)" autocomplete="off" />
+            <x-input-error class="mt-2" :messages="$errors->get('secret_note')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

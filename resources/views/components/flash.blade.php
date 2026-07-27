@@ -9,5 +9,4 @@
      class="alert alert-{{ $type }} alert-dismissible fade show shadow-sm border-0" 
      role="alert">
     {{ $message }}
-    <button type="button" class="btn-close" @click="show = false" aria-label="Close"></button>
 </div>

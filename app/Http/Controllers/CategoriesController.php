@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Category;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
+
+class CategoriesController extends Controller
+{
+    //
+    public function index(){
+        $categories = Category::all();
+        return view('categories.index', compact('categories'));
+    }
+ 
+    public function create(){
+        $category = new Category();
+        return view('categories.create', compact('category'));
+    }
+
+    public function store(StoreCategoryRequest $request){
+        $validated = $request->validated();
+
+        Category::create($validated);
+        return redirect()->route('categories.index')->with('success', 'Category created successfully!');
+    }
+
+    public function edit(Category $category){
+        return view('categories.edit', compact('category'));
+    }
+
+    public function update(UpdateCategoryRequest $request, Category $category){
+        $validated = $request->validated();
+
+        $category->update($validated);
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully!');
+    }
+
+    public function show(Category $category){
+        // جلب المهام المرتبطة بهذا التصنيف والتي تخص المستخدم الحالي فقط
+        $tasks = $category->tasks()->where('user_id', auth()->id())->get();
+        return view('categories.show', compact('category', 'tasks'));
+    }
+
+    public function destroy(Category $category){
+        $category->delete();
+        return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
+    }
+}

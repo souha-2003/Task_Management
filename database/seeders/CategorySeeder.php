@@ -13,11 +13,13 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Urgent', 'color' => 'danger'],
-            ['name' => 'Important', 'color' => 'warning'],
-            ['name' => 'Work', 'color' => 'primary'],
-            ['name' => 'Personal', 'color' => 'info'],
-            ['name' => 'Study', 'color' => 'success'],
+            // ['name' => 'Urgent', 'color' => 'danger'],
+            // ['name' => 'Important', 'color' => 'warning'],
+            // ['name' => 'Work', 'color' => 'primary'],
+            // ['name' => 'Personal', 'color' => 'info'],
+            // ['name' => 'Study', 'color' => 'success'],
+            // No predefined categories to keep everything dynamic.
+            // Add categories via the Web UI interface. 
         ];
 
         foreach ($categories as $category) {
