@@ -28,7 +28,7 @@
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col" class="py-3 px-4">{{ __('messages.category_name') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.color') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.color') }}</th>
                                 <th scope="col" class="py-3 text-center">{{ __('messages.tasks_count') }}</th>
                                 <th scope="col" class="py-3 text-center px-4">{{ __('messages.actions') }}</th>
                             </tr>
@@ -39,7 +39,7 @@
                                     <td class="px-4 fw-bold text-dark">
                                         {{ $category->name }}
                                     </td>
-                                    <td>
+                                    <td class="d-none d-md-table-cell">
                                         <span class="badge px-3 py-2 text-capitalize" style="font-size: 0.85rem; background-color: {{ $category->color }}1a; color: {{ $category->color }}; border: 1px solid {{ $category->color }}33;">
                                             {{ $category->name }}
                                         </span>

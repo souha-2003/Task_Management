@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
@@ -13,7 +15,22 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = auth()->user();
+    $totalTasks = $user->tasks()->count();
+    $completedTasks = $user->tasks()->where('completed', true)->count();
+    $pendingTasks = $user->tasks()->where('completed', false)->count();
+    $totalCategories = \App\Models\Category::count();
+    $recentTasks = $user->tasks()->with('categories')->latest()->take(1)->get();
+
+    // Fine-grained admin counts based on specific permissions
+    $showAdminSection = $user->can('manage categories') || $user->can('manage roles') || $user->can('manage users');
+    $totalUsers = $user->can('manage users') ? \App\Models\User::count() : 0;
+    $totalRoles = $user->can('manage roles') ? \Spatie\Permission\Models\Role::count() : 0;
+
+    return view('dashboard', compact(
+        'totalTasks', 'completedTasks', 'pendingTasks', 'totalCategories', 'recentTasks',
+        'showAdminSection', 'totalUsers', 'totalRoles'
+    ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -29,30 +46,15 @@ Route::middleware('auth')->group(function () {
     // Categories CRUD Routes
     Route::resource('categories', CategoriesController::class);
    
+    // Admin Management Routes
+    Route::prefix('admin')->group(function () {
+        Route::resource('roles', RoleController::class)->except(['show'])->middleware('can:manage roles');
+        Route::middleware('can:manage users')->group(function () {
+            Route::get('users', [AdminUserController::class, 'index'])->name('admin.users.index');
+            Route::get('users/{user}/edit', [AdminUserController::class, 'edit'])->name('admin.users.edit');
+            Route::put('users/{user}', [AdminUserController::class, 'update'])->name('admin.users.update');
+        });
+    });
 });
-
-// Route::get('/test-decrypt', function () {
-//     $user = App\Models\User::find(1); 
-
-//     if ($user) {
-//         // إذا كان الحقل فارغاً، سنقوم بتحديثه بملاحظة تجريبية لتراها
-//         if (is_null($user->secret_note)) {
-//             $user->secret_note = 'هذه ملاحظة سرية تجريبية تم تشفيرها تلقائياً!';
-//             $user->save();
-            
-//             // إعادة جلب المودل لضمان قراءة البيانات المحدثة
-//             $user = App\Models\User::find(1);
-//         }
-
-//         return response()->json([
-//             'original_name' => $user->name,
-//             'encrypted_in_db' => DB::table('users')->where('id', 1)->value('secret_note'), // القيمة الخام المشفرة في قاعدة البيانات
-//             'decrypted_by_laravel' => $user->secret_note // القيمة بعد فك التشفير التلقائي بواسطة لارافيل
-//         ], 200, [], JSON_UNESCAPED_UNICODE);
-//     }
-
-//     return 'لم يتم العثور على المستخدم رقم 1.';
-// });
-
 
 require __DIR__.'/auth.php';

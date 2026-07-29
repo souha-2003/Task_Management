@@ -14,9 +14,11 @@ class TaskService
      */
     public function getPaginatedTasksForUser(User $user, ?string $search = null, ?string $filter = null, int $perPage = 5): LengthAwarePaginator
     {
-        $query = $user->tasks()
-            ->with('categories')
-            ->search($search);
+        if ($user->can('edit any task') || $user->can('delete any task')) {
+            $query = Task::query()->with(['user', 'categories'])->search($search);
+        } else {
+            $query = $user->tasks()->with('categories')->search($search);
+        }
 
         if ($filter === 'completed') {
             $query->completed();

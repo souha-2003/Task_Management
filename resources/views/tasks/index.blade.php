@@ -53,10 +53,10 @@
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col" class="py-3 px-4">{{ __('messages.task_title') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.task_description') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.task_note') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.task_description') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.task_note') }}</th>
                                 <th scope="col" class="py-3 text-center">{{ __('messages.status') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.created_at') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.created_at') }}</th>
                                 <th scope="col" class="py-3 text-center px-4">{{ __('messages.actions') }}</th>
                             </tr>
                         </thead>
@@ -65,16 +65,21 @@
                                 <tr>
                                     <td class="px-4 fw-bold text-dark">
                                         <div>{{ $task->title }}</div>
+                                        @if(auth()->user()->can('edit any task') || auth()->user()->can('delete any task'))
+                                            <div class="small text-secondary mt-1 fw-semibold" style="font-size: 0.75rem;">
+                                                👤 {{ __('Owner') }}: {{ $task->user->name ?? __('Unknown') }}
+                                            </div>
+                                        @endif
                                         <div class="mt-1 d-flex flex-wrap gap-1">
                                             @foreach ($task->categories as $category)
                                                 <span class="badge font-monospace" style="font-size: 0.7rem; background-color: {{ $category->color }}1a; color: {{ $category->color }}; border: 1px solid {{ $category->color }}33;">{{ $category->name }}</span>
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td class="text-muted" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <td class="text-muted d-none d-md-table-cell" style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         {{ $task->description }}
                                     </td>
-                                    <td class="text-muted" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <td class="text-muted d-none d-md-table-cell" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         {{ $task->note ?? '-' }}
                                     </td>
                                     <td class="text-center">
@@ -92,7 +97,7 @@
                                             @endif
                                         </form>
                                     </td>
-                                    <td>{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>
+                                    <td class="d-none d-md-table-cell">{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>
                                     <td class="text-center px-4">
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-info btn-sm px-3 fw-semibold">

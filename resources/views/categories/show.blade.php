@@ -35,9 +35,9 @@
                         <thead class="table-light">
                             <tr>
                                 <th scope="col" class="py-3 px-4">{{ __('messages.task_title') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.task_description') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.task_description') }}</th>
                                 <th scope="col" class="py-3 text-center">{{ __('messages.status') }}</th>
-                                <th scope="col" class="py-3">{{ __('messages.created_at') }}</th>
+                                <th scope="col" class="py-3 d-none d-md-table-cell">{{ __('messages.created_at') }}</th>
                                 <th scope="col" class="py-3 text-center px-4">{{ __('messages.actions') }}</th>
                             </tr>
                         </thead>
@@ -47,7 +47,7 @@
                                     <td class="px-4 fw-bold text-dark">
                                         {{ $task->title }}
                                     </td>
-                                    <td class="text-muted" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                    <td class="text-muted d-none d-md-table-cell" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
                                         {{ $task->description }}
                                     </td>
                                     <td class="text-center">
@@ -57,7 +57,7 @@
                                             <span class="badge bg-secondary px-3 py-1 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
                                         @endif
                                     </td>
-                                    <td>{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>
+                                    <td class="d-none d-md-table-cell">{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>
                                     <td class="text-center px-4">
                                         <div class="d-flex justify-content-center gap-2">
                                             <a href="{{ route('tasks.show', $task) }}" class="btn btn-outline-info btn-sm px-3 fw-semibold">

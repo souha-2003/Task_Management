@@ -85,10 +85,23 @@
                 margin-bottom: 0;
                 width: 100%;
                 border-collapse: collapse;
-                min-width: 750px; /* يمنع انضغاط الأعمدة ويجعل الجدول قابلاً للتمرير على الموبايل */
                 border: none !important;
-                                border-bottom-width: 0 !important;
-
+                border-bottom-width: 0 !important;
+            }
+            @media (min-width: 992px) {
+                .table {
+                    min-width: 750px; /* يمنع انضغاط الأعمدة على الشاشات الكبيرة */
+                }
+            }
+            @media (max-width: 991.98px) {
+                .table td, .table th {
+                    padding: 0.5rem 0.3rem !important;
+                    font-size: 0.75rem;
+                }
+                .table .btn {
+                    padding: 0.2rem 0.4rem !important;
+                    font-size: 0.7rem !important;
+                }
             }
             /* إلغاء أي خط أسود افتراضي يضيفه بوتستراب أسفل الجدول */
             
@@ -188,6 +201,9 @@
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav {{ app()->getLocale() == 'ar' ? 'ms-auto' : 'me-auto' }} mb-2 mb-lg-0">
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active fw-bold' : '' }}" href="{{ route('dashboard') }}">{{ __('messages.dashboard') }}</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('tasks.index') ? 'active fw-bold' : '' }}" href="{{ route('tasks.index') }}">{{ __('messages.tasks') }}</a>
                             </li>
                             <li class="nav-item">
@@ -196,6 +212,29 @@
                             <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('categories.index') ? 'active fw-bold' : '' }}" href="{{ route('categories.index') }}">{{ __('messages.categories') }}</a>
                             </li>
+                            @if (Auth::user()->can('manage users') || Auth::user()->can('manage roles'))
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle {{ request()->routeIs('admin.users.*') || request()->routeIs('roles.*') ? 'active fw-bold' : '' }}" href="#" id="adminNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    ⚙️ {{ __('messages.administration') }}
+                                </a>
+                                <ul class="dropdown-menu shadow" aria-labelledby="adminNavbarDropdown" style="min-width: 200px; padding: 0.3rem;">
+                                    @can('manage users')        
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('admin.users.index') }}" style="text-align: {{ app()->getLocale() == 'ar' ? 'right' : 'left' }}; padding: 0.6rem 1.25rem;">
+                                                👥 {{ __('messages.users_management') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                    @can('manage roles')
+                                        <li>
+                                            <a class="dropdown-item" href="{{ route('roles.index') }}" style="text-align: {{ app()->getLocale() == 'ar' ? 'right' : 'left' }}; padding: 0.6rem 1.25rem;">
+                                                🔑 {{ __('messages.roles_management') }}
+                                            </a>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                            @endif
                         </ul>
                         <div class="d-flex align-items-center gap-3">
                             <!-- Language Dropdown -->

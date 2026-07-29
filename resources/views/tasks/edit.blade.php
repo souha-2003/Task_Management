@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="row justify-content-center">
         <div class="col-md-8 col-12">
-            <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
                 <h2 class="fw-bold mb-0 text-dark">✏️ {{ __('messages.edit_task') }}</h2>
                 <a href="{{ route('tasks.index') }}" class="btn btn-outline-secondary px-3 fw-semibold">
                     &larr; {{ __('messages.back_to_list') }}

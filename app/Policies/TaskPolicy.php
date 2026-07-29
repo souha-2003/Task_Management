@@ -20,7 +20,9 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        return $user->id === $task->user_id;
+        return $user->id === $task->user_id 
+            || $user->hasPermissionTo('edit any task') 
+            || $user->hasPermissionTo('delete any task');
     }
 
     /**
@@ -36,7 +38,8 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->id === $task->user_id;
+        return $user->id === $task->user_id 
+            || $user->hasPermissionTo('edit any task');
     }
 
     /**
@@ -44,6 +47,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $user->id === $task->user_id;
+        return $user->id === $task->user_id 
+            || $user->hasPermissionTo('delete any task');
     }
 }

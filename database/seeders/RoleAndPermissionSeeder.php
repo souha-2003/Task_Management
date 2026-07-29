@@ -14,15 +14,25 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create Permissions
-        $manageCategories = Permission::create(['name' => 'manage categories']);
+        // Create Permissions using firstOrCreate to avoid errors if run multiple times
+        $manageCategories = Permission::firstOrCreate(['name' => 'manage categories']);
+        $manageRoles = Permission::firstOrCreate(['name' => 'manage roles']);
+        $manageUsers = Permission::firstOrCreate(['name' => 'manage users']);
+        $editAnyTask = Permission::firstOrCreate(['name' => 'edit any task']);
+        $deleteAnyTask = Permission::firstOrCreate(['name' => 'delete any task']);
 
         // Create Roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $userRole = Role::firstOrCreate(['name' => 'user']);
 
         // Assign Permissions to Roles
-        $adminRole->givePermissionTo($manageCategories);
+        $adminRole->syncPermissions([
+            $manageCategories,
+            $manageRoles,
+            $manageUsers,
+            $editAnyTask,
+            $deleteAnyTask,
+        ]);
 
         // Create or assign roles to test users
         $admin = User::updateOrCreate(
