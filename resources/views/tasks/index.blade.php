@@ -67,7 +67,7 @@
                                         <div>{{ $task->title }}</div>
                                         @if(auth()->user()->can('edit any task') || auth()->user()->can('delete any task'))
                                             <div class="small text-secondary mt-1 fw-semibold" style="font-size: 0.75rem;">
-                                                👤 {{ __('Owner') }}: {{ $task->user->name ?? __('Unknown') }}
+                                                👤 {{ __('messages.task_owner') }}: {{ $task->user->name ?? __('messages.unknown') }}
                                             </div>
                                         @endif
                                         <div class="mt-1 d-flex flex-wrap gap-1">

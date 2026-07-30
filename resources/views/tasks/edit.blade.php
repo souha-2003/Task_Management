@@ -14,6 +14,93 @@
                         @csrf
                         @method('PUT')
 
+                        <!-- User (For Admins) -->
+                        @if(auth()->user()->hasRole('admin') || auth()->user()->can('edit any task'))
+                            <div class="mb-3">
+                                <x-input-label value="{{ __('messages.assign_to_user') }} *" />
+                                
+                                <input type="hidden" name="user_id" id="selected_user_id" value="{{ old('user_id', $task->user_id) }}">
+
+                                <div class="dropdown" id="userSelectDropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center p-3" type="button" id="userDropdownButton" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 12px; border: 1px solid #cbd5e1; background-color: #fff; color: #334155; transition: all 0.2s;">
+                                        <span id="selected-user-display" class="d-flex align-items-center gap-3"></span>
+                                    </button>
+                                    <ul class="dropdown-menu w-100 p-2 shadow-sm border-0" aria-labelledby="userDropdownButton" style="max-height: 280px; overflow-y: auto; background-color: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                        @foreach ($users as $user)
+                                            <li class="mb-2" style="list-style: none;">
+                                                <button type="button" class="dropdown-item rounded-3 p-2 d-flex align-items-center gap-3 text-start user-option border" data-id="{{ $user->id }}" data-name="{{ $user->name }}" data-email="{{ $user->email }}" style="background-color: #ffffff; border-color: #e2e8f0; transition: all 0.2s ease;">
+                                                    <div class="avatar-icon d-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 38px; height: 38px; font-size: 1.1rem; border: 1px solid #e2e8f0;">
+                                                        👤
+                                                    </div>
+                                                    <div class="d-flex flex-column align-items-start">
+                                                        <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ $user->name }}</span>
+                                                        <span class="small" style="color: #64748b; font-size: 0.8rem;">{{ $user->email }}</span>
+                                                    </div>
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                <x-input-error :messages="$errors->get('user_id')" />
+                            </div>
+
+                            <style>
+                                #userSelectDropdown .user-option:hover {
+                                    background-color: rgba(99, 102, 241, 0.08) !important;
+                                    border-color: #6366f1 !important;
+                                    transform: translateY(-1px);
+                                    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.15);
+                                    font-weight: 500;
+                                }
+                                #userSelectDropdown .user-option:hover .fw-bold {
+                                    color: #6366f1 !important;
+                                }
+                                #userSelectDropdown .dropdown-item {
+                                    white-space: normal;
+                                }
+                            </style>
+
+                            <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const dropdown = document.getElementById('userSelectDropdown');
+                                const hiddenInput = document.getElementById('selected_user_id');
+                                const display = document.getElementById('selected-user-display');
+                                const options = dropdown.querySelectorAll('.user-option');
+
+                                function selectUser(id, name, email) {
+                                    hiddenInput.value = id;
+                                    display.innerHTML = `
+                                        <div class="avatar-icon d-flex align-items-center justify-content-center bg-light text-primary rounded-circle" style="width: 32px; height: 32px; font-size: 0.95rem; border: 1px solid #e2e8f0;">
+                                            👤
+                                        </div>
+                                        <div class="d-flex flex-column align-items-start" style="line-height: 1.2;">
+                                            <span class="fw-bold" style="color: #6366f1; font-size: 0.9rem;">${name}</span> 
+                                            <span class="small" style="color: #64748b; font-size: 0.75rem;">${email}</span>
+                                        </div>
+                                    `;
+                                }
+
+                                const activeId = hiddenInput.value;
+                                let foundActive = false;
+                                options.forEach(option => {
+                                    if (option.getAttribute('data-id') == activeId) {
+                                        selectUser(activeId, option.getAttribute('data-name'), option.getAttribute('data-email'));
+                                        foundActive = true;
+                                    }
+                                    
+                                    option.addEventListener('click', function() {
+                                        selectUser(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-email'));
+                                    });
+                                });
+
+                                if (!foundActive && options.length > 0) {
+                                    const first = options[0];
+                                    selectUser(first.getAttribute('data-id'), first.getAttribute('data-name'), first.getAttribute('data-email'));
+                                }
+                            });
+                            </script>
+                        @endif
+
                         <!-- Title -->
                         <div class="mb-3">
                             <x-input-label for="title" value="{{ __('messages.task_title') }} *" />

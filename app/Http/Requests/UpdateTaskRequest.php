@@ -39,13 +39,19 @@ class UpdateTaskRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'note' => 'nullable|string',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
         ];
+
+        if ($this->user() && ($this->user()->hasRole('admin') || $this->user()->can('edit any task'))) {
+            $rules['user_id'] = 'required|exists:users,id';
+        }
+
+        return $rules;
     }
 
     /**

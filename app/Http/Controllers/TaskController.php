@@ -39,7 +39,11 @@ class TaskController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('tasks.create', compact('categories'));
+        $users = [];
+        if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
+            $users = \App\Models\User::all();
+        }
+        return view('tasks.create', compact('categories', 'users'));
     }
 
     /**
@@ -47,7 +51,15 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        $this->taskService->createTask(auth()->user(), $request->validated());
+        $data = $request->validated();
+        
+        if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
+            $targetUser = \App\Models\User::findOrFail($data['user_id']);
+        } else {
+            $targetUser = auth()->user();
+        }
+
+        $this->taskService->createTask($targetUser, $data);
 
         return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
     }
@@ -72,8 +84,12 @@ class TaskController extends Controller
         Gate::authorize('update', $task);
 
         $categories = Category::all();
+        $users = [];
+        if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
+            $users = \App\Models\User::all();
+        }
 
-        return view('tasks.edit', compact('task', 'categories'));
+        return view('tasks.edit', compact('task', 'categories', 'users'));
     }
 
     /**
@@ -81,7 +97,15 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        $this->taskService->updateTask($task, $request->validated());
+        $data = $request->validated();
+
+        if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
+            if (isset($data['user_id'])) {
+                $task->user_id = $data['user_id'];
+            }
+        }
+
+        $this->taskService->updateTask($task, $data);
 
         return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
     }

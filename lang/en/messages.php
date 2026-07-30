@@ -94,5 +94,9 @@ return [
     'manage_roles' => 'Roles & Permissions',
     'manage_user_roles' => 'Manage Roles & Permissions',
     'direct_permissions_explain' => 'Direct Permissions (Exceptions)',
+    'inherited_permission' => 'Inherited via Role',
     'direct_permissions_hint' => 'Note: You only need to assign these if you want to grant a permission directly to this user, bypassing their role.',
+    'assign_to_user' => 'Assign to User',
+    'task_owner' => 'Task Owner',
+    'unknown' => 'Unknown',
 ];

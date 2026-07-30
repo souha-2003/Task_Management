@@ -1,7 +1,50 @@
 <x-app-layout>
+    <style>
+        .badge-direct {
+            background-color: rgba(245, 158, 11, 0.07) !important;
+            color: #d97706 !important;
+            border: 1px solid rgba(245, 158, 11, 0.35) !important;
+        }
+        .badge-inherited {
+            background-color: rgba(14, 165, 233, 0.07) !important;
+            color: #0284c7 !important;
+            border: 1px solid rgba(14, 165, 233, 0.35) !important;
+        }
+        .badge-role {
+            background-color: rgba(139, 92, 246, 0.08) !important;
+            color: #612eb9ff !important;
+            border: 1px solid rgba(139, 92, 246, 0.35) !important;
+        }
+        .badge-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .badge-direct-dot {
+            background-color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+        .badge-inherited-dot {
+            background-color: #0284c7;
+            border: 1px solid rgba(14, 165, 233, 0.5);
+        }
+    </style>
+
     <div class="row mb-4 align-items-center">
         <div class="col-md-12">
-            <h2 class="fw-bold mb-0 text-dark">👥 {{ __('messages.users_management' ?? 'Users Management') }}</h2>
+            <h2 class="fw-bold mb-1 text-dark">👥 {{ __('messages.users_management' ?? 'Users Management') }}</h2>
+            <div class="text-secondary small d-flex flex-wrap gap-3 align-items-center mt-2">
+                <span class="fw-semibold">{{ __('messages.permissions' ?? 'Permissions') }}:</span>
+                <span class="d-inline-flex align-items-center gap-1">
+                    <span class="badge-dot badge-direct-dot"></span>
+                    {{ __('messages.direct_permissions_explain' ?? 'Direct Permission') }}
+                </span>
+                <span class="d-inline-flex align-items-center gap-1">
+                    <span class="badge-dot badge-inherited-dot"></span>
+                    {{ __('messages.inherited_permission' ?? 'Inherited via Role') }}
+                </span>
+            </div>
         </div>
     </div>
 
@@ -33,26 +76,37 @@
                                         <span class="badge bg-light text-secondary border">{{ __('messages.no_roles' ?? 'No Roles') }}</span>
                                     @else
                                         @foreach($user->roles as $role)
-                                            <span class="badge bg-primary text-white">
+                                            <span class="badge badge-role">
                                                 {{ $role->name }}
                                             </span>
                                         @endforeach
                                     @endif
                                 </td>
                                 <td data-label="{{ __('messages.permissions' ?? 'Permissions') }}" class="d-none d-md-table-cell">
-                                    @if($user->getAllPermissions()->isEmpty())
+                                    @php
+                                        $directPermissions = $user->getDirectPermissions();
+                                        $inheritedPermissions = $user->getPermissionsViaRoles()->reject(function($permission) use ($directPermissions) {
+                                            return $directPermissions->contains('id', $permission->id);
+                                        });
+                                    @endphp
+                                    @if($directPermissions->isEmpty() && $inheritedPermissions->isEmpty())
                                         <span class="text-muted small">-</span>
                                     @else
-                                        @foreach($user->getAllPermissions() as $permission)
-                                            <span class="badge bg-light text-dark border">
-                                                {{ $permission->name }}
+                                        @foreach($directPermissions as $permission)
+                                            <span class="badge badge-direct me-1 mb-1" title="{{ __('messages.direct_permissions_explain' ?? 'Direct Permission') }}">
+                                                ⚡ {{ $permission->name }}
+                                            </span>
+                                        @endforeach
+                                        @foreach($inheritedPermissions as $permission)
+                                            <span class="badge badge-inherited me-1 mb-1" title="{{ __('messages.inherited_permission' ?? 'Inherited via Role') }}">
+                                                🔗 {{ $permission->name }}
                                             </span>
                                         @endforeach
                                     @endif
                                 </td>
                                 <td data-label="{{ __('messages.actions' ?? 'Actions') }}" class="text-center px-4">
                                     <div class="d-flex justify-content-center gap-2">
-                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-outline-warning btn-sm px-3 fw-semibold">
+                                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-outline-warning btn-sm px-3 fw-semibold text-nowrap">
                                             ⚙️ {{ __('messages.manage_roles' ?? 'Roles & Permissions') }}
                                         </a>
                                     </div>

@@ -298,5 +298,157 @@
                 </div>
             </footer>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Style cursor and custom modal on mobile/small screens
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    @media (max-width: 767.98px) {
+                        table tbody tr {
+                            cursor: pointer;
+                        }
+                    }
+                    .custom-details-modal-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(15, 23, 42, 0.6);
+                        backdrop-filter: blur(4px);
+                        z-index: 9999;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        opacity: 0;
+                        transition: opacity 0.2s ease-in-out;
+                    }
+                    .custom-details-modal-card {
+                        background: #ffffff;
+                        border-radius: 16px;
+                        width: 90%;
+                        max-width: 500px;
+                        max-height: 85%;
+                        overflow-y: auto;
+                        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                        transform: translateY(20px);
+                        transition: transform 0.2s ease-in-out;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    .custom-details-modal-overlay.show {
+                        opacity: 1;
+                    }
+                    .custom-details-modal-overlay.show .custom-details-modal-card {
+                        transform: translateY(0);
+                    }
+                `;
+                document.head.appendChild(style);
+
+                document.addEventListener('click', function (e) {
+                    // Only trigger on small screens (< 768px)
+                    if (window.innerWidth >= 768) return;
+
+                    // Find closest table row
+                    const tr = e.target.closest('table tbody tr');
+                    if (!tr) return;
+
+                    // Ignore if click is on buttons, inputs, links, dropdowns, etc.
+                    if (e.target.closest('a, button, input, select, textarea, label, [role="button"]')) return;
+
+                    const table = tr.closest('table');
+                    if (!table) return;
+
+                    // Get columns header names (fallback to empty if not found)
+                    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+                    const cells = Array.from(tr.cells);
+
+                    let detailsHtml = '<div class="d-flex flex-column gap-3">';
+                    let hasDetails = false;
+
+                    headers.forEach((header, index) => {
+                        // Skip actions column
+                        if (!header || 
+                            header.toLowerCase().includes('action') || 
+                            header.includes('العمليات') || 
+                            header.includes('الاجراءات') || 
+                            header.includes('الإجراءات')) {
+                            return;
+                        }
+
+                        const cell = cells[index];
+                        if (!cell) return;
+
+                        // Get html content (cloned)
+                        const contentHtml = cell.innerHTML.trim();
+                        // Skip if it's empty or dash
+                        if (contentHtml === '-' || contentHtml === '') return;
+
+                        hasDetails = true;
+
+                        detailsHtml += `
+                            <div class="border-bottom pb-2">
+                                <div class="text-secondary small fw-bold mb-1">${header}</div>
+                                <div class="text-dark fs-6">${contentHtml}</div>
+                            </div>
+                        `;
+                    });
+
+                    detailsHtml += '</div>';
+
+                    if (!hasDetails) return;
+
+                    // Replicate actions/buttons at the footer of the modal if they exist
+                    const actionsCell = tr.querySelector('td[data-label*="Action"], td[data-label*="action"], td[data-label*="العمليات"], td:last-child');
+                    let footerHtml = '';
+                    if (actionsCell) {
+                        // Clone the inner HTML of the actions cell to preserve events/classes
+                        footerHtml = actionsCell.innerHTML;
+                    }
+
+                    // Check/create modal
+                    let overlay = document.getElementById('custom-details-modal');
+                    if (!overlay) {
+                        overlay = document.createElement('div');
+                        overlay.id = 'custom-details-modal';
+                        overlay.className = 'custom-details-modal-overlay';
+                        overlay.style.display = 'none';
+                        overlay.innerHTML = `
+                            <div class="custom-details-modal-card p-4">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-dark mb-0">📋 ${document.dir === 'rtl' ? 'تفاصيل السجل' : 'Row Details'}</h5>
+                                    <button type="button" class="btn-close" id="custom-details-modal-close" style="background: none; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #64748b;">&times;</button>
+                                </div>
+                                <div id="custom-details-modal-body" class="mb-4" style="flex-grow: 1; overflow-y: auto;"></div>
+                                <div id="custom-details-modal-footer" class="d-flex justify-content-center gap-2"></div>
+                            </div>
+                        `;
+                        document.body.appendChild(overlay);
+
+                        const closeModal = () => {
+                            overlay.classList.remove('show');
+                            setTimeout(() => {
+                                overlay.style.display = 'none';
+                            }, 200);
+                        };
+
+                        overlay.addEventListener('click', function (e) {
+                            if (e.target === overlay || e.target.id === 'custom-details-modal-close') {
+                                closeModal();
+                            }
+                        });
+                    }
+
+                    document.getElementById('custom-details-modal-body').innerHTML = detailsHtml;
+                    document.getElementById('custom-details-modal-footer').innerHTML = footerHtml;
+
+                    overlay.style.display = 'flex';
+                    // Trigger reflow to run transition
+                    overlay.offsetHeight;
+                    overlay.classList.add('show');
+                });
+            });
+        </script>
     </body>
 </html>
