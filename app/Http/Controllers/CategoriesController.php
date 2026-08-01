@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
-use Illuminate\Support\Facades\Gate;
 
 class CategoriesController extends Controller
 {
-    //
+    public function __construct()
+    {
+        $this->authorizeResource(Category::class, 'category');
+    }
+
     public function index(){
         $categories = Category::withCount(['tasks' => function ($query) {
             $query->where('user_id', auth()->id());
@@ -19,13 +22,11 @@ class CategoriesController extends Controller
     }
  
     public function create(){
-        Gate::authorize('create', Category::class);
         $category = new Category();
         return view('categories.create', compact('category'));
     }
 
     public function store(StoreCategoryRequest $request){
-        Gate::authorize('create', Category::class);
         $validated = $request->validated();
 
         Category::create($validated);
@@ -33,12 +34,10 @@ class CategoriesController extends Controller
     }
 
     public function edit(Category $category){
-        Gate::authorize('update', $category);
         return view('categories.edit', compact('category'));
     }
 
     public function update(UpdateCategoryRequest $request, Category $category){
-        Gate::authorize('update', $category);
         $validated = $request->validated();
 
         $category->update($validated);
@@ -52,7 +51,6 @@ class CategoriesController extends Controller
     }
 
     public function destroy(Category $category){
-        Gate::authorize('delete', $category);
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
     }
