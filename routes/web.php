@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
@@ -14,24 +15,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    $user = auth()->user();
-    $totalTasks = $user->tasks()->count();
-    $completedTasks = $user->tasks()->where('completed', true)->count();
-    $pendingTasks = $user->tasks()->where('completed', false)->count();
-    $totalCategories = \App\Models\Category::count();
-    $recentTasks = $user->tasks()->with('categories')->latest()->take(1)->get();
-
-    // Fine-grained admin counts based on specific permissions
-    $showAdminSection = $user->can('manage categories') || $user->can('manage roles') || $user->can('manage users');
-    $totalUsers = $user->can('manage users') ? \App\Models\User::count() : 0;
-    $totalRoles = $user->can('manage roles') ? \Spatie\Permission\Models\Role::count() : 0;
-
-    return view('dashboard', compact(
-        'totalTasks', 'completedTasks', 'pendingTasks', 'totalCategories', 'recentTasks',
-        'showAdminSection', 'totalUsers', 'totalRoles'
-    ));
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
