@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="row justify-content-center">
         <div class="col-md-8 col-12">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h2 class="fw-bold mb-0 text-dark">⚙️ {{ __('messages.manage_user_roles' ?? 'Manage Roles & Permissions') }}: {{ $user->name }}</h2>
-                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary px-3 fw-semibold">
+            <div class="d-flex align-items-center justify-content-between gap-2 mb-4">
+                <h2 class="fw-bold mb-0 text-dark responsive-title">⚙️ {{ __('messages.manage_user_roles' ?? 'Manage Roles & Permissions') }}: {{ $user->name }}</h2>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary px-3 fw-semibold text-nowrap">
                     &larr; {{ __('messages.back_to_list' ?? 'Back to List') }}
                 </a>
             </div>
@@ -75,6 +75,25 @@
     <style>
         .cursor-pointer {
             cursor: pointer;
+        }
+        .responsive-title {
+            font-size: 1.4rem;
+            white-space: nowrap;
+        }
+        @media (max-width: 992px) {
+            .responsive-title {
+                font-size: 1.2rem !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .responsive-title {
+                font-size: 1rem !important;
+            }
+        }
+        @media (max-width: 576px) {
+            .responsive-title {
+                font-size: 0.98rem !important;
+            }
         }
     </style>
 </x-app-layout>

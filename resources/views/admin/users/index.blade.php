@@ -85,21 +85,19 @@
                                 <td data-label="{{ __('messages.permissions' ?? 'Permissions') }}" class="d-none d-md-table-cell">
                                     @php
                                         $directPermissions = $user->getDirectPermissions();
-                                        $inheritedPermissions = $user->getPermissionsViaRoles()->reject(function($permission) use ($directPermissions) {
-                                            return $directPermissions->contains('id', $permission->id);
-                                        });
+                                        $inheritedPermissions = $user->getPermissionsViaRoles();
                                     @endphp
                                     @if($directPermissions->isEmpty() && $inheritedPermissions->isEmpty())
                                         <span class="text-muted small">-</span>
                                     @else
                                         @foreach($directPermissions as $permission)
                                             <span class="badge badge-direct me-1 mb-1" title="{{ __('messages.direct_permissions_explain' ?? 'Direct Permission') }}">
-                                                ⚡ {{ $permission->name }}
+                                                {{ $permission->name }}
                                             </span>
                                         @endforeach
                                         @foreach($inheritedPermissions as $permission)
                                             <span class="badge badge-inherited me-1 mb-1" title="{{ __('messages.inherited_permission' ?? 'Inherited via Role') }}">
-                                                🔗 {{ $permission->name }}
+                                                {{ $permission->name }}
                                             </span>
                                         @endforeach
                                     @endif

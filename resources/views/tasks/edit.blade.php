@@ -122,6 +122,18 @@
                             <x-input-error :messages="$errors->get('note')" />
                         </div>
 
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <x-input-label for="status" value="{{ __('messages.status') }} *" />
+                            <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required style="border-radius: 8px;">
+                                <option value="pending" {{ old('status', $task->status) === 'pending' ? 'selected' : '' }}>{{ __('messages.pending') }}</option>
+                                <option value="in_progress" {{ old('status', $task->status) === 'in_progress' ? 'selected' : '' }}>{{ __('messages.in_progress') }}</option>
+                                <option value="review" {{ old('status', $task->status) === 'review' ? 'selected' : '' }}>{{ __('messages.review') }}</option>
+                                <option value="completed" {{ old('status', $task->status) === 'completed' ? 'selected' : '' }}>{{ __('messages.completed') }}</option>
+                            </select>
+                            <x-input-error :messages="$errors->get('status')" />
+                        </div>
+
                         <!-- Categories -->
                         <div class="mb-4">
                             <x-input-label value="{{ __('messages.categories') }}" />

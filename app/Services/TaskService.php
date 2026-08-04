@@ -24,6 +24,10 @@ class TaskService
             $query->completed();
         } elseif ($filter === 'pending') {
             $query->pending();
+        } elseif ($filter === 'in_progress') {
+            $query->inProgress();
+        } elseif ($filter === 'review') {
+            $query->review();
         }
 
         return $query->latest()->paginate($perPage)->withQueryString();
@@ -68,12 +72,19 @@ class TaskService
     }
 
     /**
-     * تبديل حالة المهمة بين مكتملة وغير مكتملة.
+     * تبديل حالة المهمة بين الحالات الأربع بشكل حلقي.
      */
     public function toggleTaskStatus(Task $task): Task
     {
+        $nextStatus = match ($task->status) {
+            'pending' => 'in_progress',
+            'in_progress' => 'review',
+            'review' => 'completed',
+            default => 'pending',
+        };
+
         $task->update([
-            'completed' => !$task->completed,
+            'status' => $nextStatus,
         ]);
 
         return $task;

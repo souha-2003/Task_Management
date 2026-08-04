@@ -43,6 +43,7 @@ class UpdateTaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'note' => 'nullable|string',
+            'status' => 'required|string|in:pending,in_progress,review,completed',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,id',
         ];

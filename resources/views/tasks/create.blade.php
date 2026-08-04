@@ -110,7 +110,7 @@
                         <!-- Description -->
                         <div class="mb-3">
                             <x-input-label for="description" value="{{ __('messages.task_description') }} *" />
-                            <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror" rows="3" required>{{ old('description') }}</textarea>
+                            <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror" rows="2" required>{{ old('description') }}</textarea>
                             <x-input-error :messages="$errors->get('description')" />
                         </div>
 
@@ -120,6 +120,8 @@
                             <textarea id="note" name="note" class="form-control @error('note') is-invalid @enderror" rows="2">{{ old('note') }}</textarea>
                             <x-input-error :messages="$errors->get('note')" />
                         </div>
+
+
 
                         <!-- Categories -->
                         <div class="mb-4">

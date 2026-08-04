@@ -9,6 +9,7 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use App\Models\User;
 
 class TaskController extends Controller
 {
@@ -41,7 +42,7 @@ class TaskController extends Controller
         $categories = Category::all();
         $users = [];
         if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
-            $users = \App\Models\User::all();
+            $users = User::all();
         }
         return view('tasks.create', compact('categories', 'users'));
     }
@@ -54,7 +55,7 @@ class TaskController extends Controller
         $data = $request->validated();
         
         if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
-            $targetUser = \App\Models\User::findOrFail($data['user_id']);
+            $targetUser = User::findOrFail($data['user_id']);
         } else {
             $targetUser = auth()->user();
         }
@@ -69,6 +70,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        // استدعاء البوليسي داخل الكونترولر لعدم وجود ملف ريكويست كما في الستور والابديت
         Gate::authorize('view', $task);
 
         $task->load('categories');
@@ -86,7 +88,7 @@ class TaskController extends Controller
         $categories = Category::all();
         $users = [];
         if (auth()->user()->hasRole('admin') || auth()->user()->can('edit any task')) {
-            $users = \App\Models\User::all();
+            $users = User::all();
         }
 
         return view('tasks.edit', compact('task', 'categories', 'users'));

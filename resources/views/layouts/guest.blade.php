@@ -18,6 +18,9 @@
         @if (app()->getLocale() == 'ar')
             <!-- Bootstrap RTL CSS -->
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" integrity="sha384-dpuaG1suU0eT09tx5plTaGMLBsfDLzUCCUXOY2j/LSvXYuG6Bqs43ALlhIqAJVRb" crossorigin="anonymous">
+        @else
+            <!-- Bootstrap LTR CSS -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         @endif
 
         <style>
@@ -31,6 +34,27 @@
                 background: var(--bg-gradient);
                 min-height: 100vh;
                 color: #f8fafc;
+            }
+            .btn {
+                border-radius: 8px !important;
+                padding: 0.4rem 1.1rem;
+                font-weight: 600;
+                transition: all 0.2s ease-in-out;
+            }
+            .btn:hover {
+                transform: translateY(-1.5px);
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+            }
+            .btn-primary {
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+                border: none !important;
+                color: #ffffff !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            }
+            .btn-primary:hover {
+                background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+                color: #ffffff !important;
+                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35) !important;
             }
             .card {
                 border-radius: 16px;

@@ -20,8 +20,10 @@
                 <div class="col-md-2 col-12">
                     <select name="filter" class="form-select" onchange="this.form.submit()">
                         <option value="" {{ request('filter') === '' ? 'selected' : '' }}>{{ __('messages.all_statuses') }}</option>
-                        <option value="completed" {{ request('filter') === 'completed' ? 'selected' : '' }}>{{ __('messages.completed') }}</option>
                         <option value="pending" {{ request('filter') === 'pending' ? 'selected' : '' }}>{{ __('messages.pending') }}</option>
+                        <option value="in_progress" {{ request('filter') === 'in_progress' ? 'selected' : '' }}>{{ __('messages.in_progress') }}</option>
+                        <option value="review" {{ request('filter') === 'review' ? 'selected' : '' }}>{{ __('messages.review') }}</option>
+                        <option value="completed" {{ request('filter') === 'completed' ? 'selected' : '' }}>{{ __('messages.completed') }}</option>
                     </select>
                 </div>
                 <div class="col-md-2 col-6">
@@ -86,15 +88,23 @@
                                         <form method="POST" action="{{ route('tasks.toggle', $task) }}" class="d-inline">
                                             @csrf
                                             @method('PATCH')
-                                            @if ($task->completed)
-                                                <button type="submit" class="btn btn-success btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
-                                                    {{ __('messages.completed') }}
-                                                </button>
-                                            @else
-                                                <button type="submit" class="btn btn-secondary btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
-                                                    {{ __('messages.pending') }}
-                                                </button>
-                                            @endif
+                                             @if ($task->status === 'completed')
+                                                 <button type="submit" class="btn btn-status-completed btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
+                                                     {{ __('messages.completed') }}
+                                                 </button>
+                                             @elseif ($task->status === 'review')
+                                                 <button type="submit" class="btn btn-status-review btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
+                                                     {{ __('messages.review') }}
+                                                 </button>
+                                             @elseif ($task->status === 'in_progress')
+                                                 <button type="submit" class="btn btn-status-in_progress btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
+                                                     {{ __('messages.in_progress') }}
+                                                 </button>
+                                             @else
+                                                 <button type="submit" class="btn btn-status-pending btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
+                                                     {{ __('messages.pending') }}
+                                                 </button>
+                                             @endif
                                         </form>
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>

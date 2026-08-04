@@ -7,12 +7,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        $category = $this->route('category');
+        return $category && $this->user()->can('update', $category);
     }
 
     /**

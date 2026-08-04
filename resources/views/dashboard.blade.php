@@ -27,7 +27,10 @@
         <!-- Stats Cards Grid -->
         <div class="row g-4 mb-4">
             <!-- Total Tasks -->
-            <div class="col-md-3 col-sm-6 col-12">
+        <!-- Stats Cards -->
+        <div class="row mb-4 g-3">
+            <!-- Total Tasks -->
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
                 <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #4f46e5 !important;">
                     <div class="card-body py-3 px-3">
                         <div class="d-flex align-items-center justify-content-between">
@@ -35,29 +38,59 @@
                                 <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('Total Tasks') }}</h6>
                                 <h4 class="fw-bold mb-0 text-dark">{{ $totalTasks }}</h4>
                             </div>
-                            <div class="fs-3">📋</div>
+                            <div class="fs-4">📋</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Pending Tasks -->
-            <div class="col-md-3 col-sm-6 col-12">
-                <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #f59e0b !important;">
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #6b7280 !important;">
                     <div class="card-body py-3 px-3">
                         <div class="d-flex align-items-center justify-content-between">
                             <div>
                                 <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('messages.pending') }}</h6>
                                 <h4 class="fw-bold mb-0 text-dark">{{ $pendingTasks }}</h4>
                             </div>
-                            <div class="fs-3">⏳</div>
+                            <div class="fs-4">⏳</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In Progress Tasks -->
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #0ea5e9 !important;">
+                    <div class="card-body py-3 px-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('messages.in_progress') }}</h6>
+                                <h4 class="fw-bold mb-0 text-dark">{{ $inProgressTasks }}</h4>
+                            </div>
+                            <div class="fs-4">⚡</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review Tasks -->
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
+                <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #f59e0b !important;">
+                    <div class="card-body py-3 px-3">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('messages.review') }}</h6>
+                                <h4 class="fw-bold mb-0 text-dark">{{ $reviewTasks }}</h4>
+                            </div>
+                            <div class="fs-4">🔍</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Completed Tasks -->
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
                 <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #10b981 !important;">
                     <div class="card-body py-3 px-3">
                         <div class="d-flex align-items-center justify-content-between">
@@ -65,14 +98,14 @@
                                 <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('messages.completed') }}</h6>
                                 <h4 class="fw-bold mb-0 text-dark">{{ $completedTasks }}</h4>
                             </div>
-                            <div class="fs-3">✅</div>
+                            <div class="fs-4">✅</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Categories -->
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-lg-2 col-md-4 col-sm-6 col-12">
                 <div class="card shadow-sm border-0 h-100" style="border-left: 4px solid #3b82f6 !important;">
                     <div class="card-body py-3 px-3">
                         <div class="d-flex align-items-center justify-content-between">
@@ -80,7 +113,7 @@
                                 <h6 class="text-secondary text-uppercase fw-semibold small mb-1" style="font-size: 0.75rem;">{{ __('messages.categories') }}</h6>
                                 <h4 class="fw-bold mb-0 text-dark">{{ $totalCategories }}</h4>
                             </div>
-                            <div class="fs-3">🏷️</div>
+                            <div class="fs-4">🏷️</div>
                         </div>
                     </div>
                 </div>
@@ -119,10 +152,14 @@
                                                 </div>
                                             </td>
                                             <td class="text-center">
-                                                @if ($task->completed)
-                                                    <span class="badge bg-success px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                                @if ($task->status === 'completed')
+                                                    <span class="badge badge-status-completed px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                                @elseif ($task->status === 'review')
+                                                    <span class="badge badge-status-review px-3 py-1 rounded-pill fw-bold">{{ __('messages.review') }}</span>
+                                                @elseif ($task->status === 'in_progress')
+                                                    <span class="badge badge-status-in_progress px-3 py-1 rounded-pill fw-bold">{{ __('messages.in_progress') }}</span>
                                                 @else
-                                                    <span class="badge bg-secondary px-3 py-1 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
+                                                    <span class="badge badge-status-pending px-3 py-1 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
                                                 @endif
                                             </td>
                                             <td class="text-center px-4">

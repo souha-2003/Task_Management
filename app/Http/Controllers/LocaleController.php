@@ -15,7 +15,7 @@ class LocaleController extends Controller
         if (in_array($locale, ['en', 'ar'])) {
             Session::put('locale', $locale);
         }
-
+        // إعادة توجيه المستخدم للصفحة السابقة التي كان يتصفحها
         return redirect()->back();
     }
 }

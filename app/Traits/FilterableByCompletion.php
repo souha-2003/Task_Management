@@ -15,13 +15,27 @@ trait FilterableByCompletion
      */
     public function scopeCompleted(Builder $query): Builder
     {
-        return $query->where($this->getCompletedColumn(), true);
+        return $query->where('status', 'completed');
     }
     /**
      * نطاق جلب العناصر المعلقة (غير المكتملة) فقط.
      */
     public function scopePending(Builder $query): Builder
     {
-        return $query->where($this->getCompletedColumn(), false);
+        return $query->where('status', 'pending');
+    }
+    /**
+     * نطاق جلب العناصر التي هي قيد العمل.
+     */
+    public function scopeInProgress(Builder $query): Builder
+    {
+        return $query->where('status', 'in_progress');
+    }
+    /**
+     * نطاق جلب العناصر التي هي قيد المراجعة.
+     */
+    public function scopeReview(Builder $query): Builder
+    {
+        return $query->where('status', 'review');
     }
 }

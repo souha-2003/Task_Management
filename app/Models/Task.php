@@ -29,7 +29,7 @@ class Task extends Model
         'title',
         'description',
         'note',
-        'completed',
+        'status',
         'user_id', 
     ];
 
@@ -40,9 +40,17 @@ class Task extends Model
      */
     protected function casts(): array
     {
-        return [
-            'completed' => 'boolean',
-        ];
+        return [];
+    }
+
+    /**
+     * Check if task is completed
+     */
+    // استخدمنا getCompletedAttribute() بدلاً من @if($task->status === 'completed') @endif في الـ blade
+    
+    public function getCompletedAttribute(): bool
+    {
+        return $this->status === 'completed';
     }
 
     /**

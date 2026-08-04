@@ -20,17 +20,21 @@
                     <div class="mb-4">
                         <h4 class="text-secondary small text-uppercase fw-bold mb-1">{{ __('messages.status') }}</h4>
                         <div class="d-flex align-items-center gap-3">
-                            @if ($task->completed)
-                                <span class="badge bg-success px-3 py-2 fs-6 rounded-pill">{{ __('messages.completed') }}</span>
+                            @if ($task->status === 'completed')
+                                <span class="badge badge-status-completed px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                            @elseif ($task->status === 'review')
+                                <span class="badge badge-status-review px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.review') }}</span>
+                            @elseif ($task->status === 'in_progress')
+                                <span class="badge badge-status-in_progress px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.in_progress') }}</span>
                             @else
-                                <span class="badge bg-secondary px-3 py-2 fs-6 rounded-pill">{{ __('messages.pending') }}</span>
+                                <span class="badge badge-status-pending px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
                             @endif
 
                             <form method="POST" action="{{ route('tasks.toggle', $task) }}" class="d-inline">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="btn btn-sm btn-outline-primary fw-semibold px-3">
-                                    {{ $task->completed ? __('messages.pending') : __('messages.completed') }}
+                                    {{ __('Change Status') }}
                                 </button>
                             </form>
                         </div>

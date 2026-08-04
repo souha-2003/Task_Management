@@ -174,9 +174,50 @@
             }
 
             .badge {
-                padding: 0.45em 0.85em !important;
+                padding: 0.55em 0.95em !important;
                 border-radius: 6px !important;
                 font-weight: 600;
+            }
+
+            /* Modern SaaS Status Badge Styles */
+            .badge-status-pending, .btn-status-pending {
+                background-color: #f1f5f9 !important;
+                color: #475569 !important;
+                border: none !important;
+            }
+            .badge-status-pending:hover, .btn-status-pending:hover {
+                background-color: #e2e8f0 !important;
+                color: #475569 !important;
+            }
+            
+            .badge-status-in_progress, .btn-status-in_progress {
+                background-color: #dbeafe !important;
+                color: #1e40af !important;
+                border: none !important;
+            }
+            .badge-status-in_progress:hover, .btn-status-in_progress:hover {
+                background-color: #bfdbfe !important;
+                color: #1e40af !important;
+            }
+            
+            .badge-status-review, .btn-status-review {
+                background-color: #fef3c7 !important;
+                color: #92400e !important;
+                border: none !important;
+            }
+            .badge-status-review:hover, .btn-status-review:hover {
+                background-color: #fde68a !important;
+                color: #92400e !important;
+            }
+            
+            .badge-status-completed, .btn-status-completed {
+                background-color: #d1fae5 !important;
+                color: #065f46 !important;
+                border: none !important;
+            }
+            .badge-status-completed:hover, .btn-status-completed:hover {
+                background-color: #a7f3d0 !important;
+                color: #065f46 !important;
             }
 
             /* Global Alert styling */
@@ -184,6 +225,31 @@
                 border-radius: 12px;
                 border: none;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            /* Custom Pagination Styles */
+            .pagination .page-item .page-link {
+                color: #4f46e5 !important;
+                border-radius: 6px;
+                margin: 0 2px;
+                border: 1px solid #e2e8f0;
+                transition: all 0.2s ease;
+            }
+            .pagination .page-item.active .page-link {
+                background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+                border-color: transparent !important;
+                color: #ffffff !important;
+                box-shadow: 0 4px 10px rgba(99, 102, 241, 0.25) !important;
+            }
+            .pagination .page-item .page-link:hover {
+                background-color: rgba(99, 102, 241, 0.08) !important;
+                border-color: #6366f1 !important;
+                color: #4f46e5 !important;
+            }
+            .pagination .page-item.disabled .page-link {
+                color: #94a3b8 !important;
+                background-color: #f8fafc !important;
+                border-color: #e2e8f0 !important;
             }
         </style>
     </head>
@@ -304,7 +370,7 @@
                 // Style cursor and custom modal on mobile/small screens
                 const style = document.createElement('style');
                 style.innerHTML = `
-                    @media (max-width: 767.98px) {
+                    @media (max-width: 991.98px) {
                         table tbody tr {
                             cursor: pointer;
                         }
@@ -347,8 +413,8 @@
                 document.head.appendChild(style);
 
                 document.addEventListener('click', function (e) {
-                    // Only trigger on small screens (< 768px)
-                    if (window.innerWidth >= 768) return;
+                    // Only trigger on small/medium screens (< 992px)
+                    if (window.innerWidth >= 992) return;
 
                     // Find closest table row
                     const tr = e.target.closest('table tbody tr');
@@ -382,8 +448,8 @@
 
                         // Get html content (cloned)
                         const contentHtml = cell.innerHTML.trim();
-                        // Skip if it's empty or dash
-                        if (contentHtml === '-' || contentHtml === '') return;
+                        // Skip if it's empty
+                        if (contentHtml === '') return;
 
                         hasDetails = true;
 

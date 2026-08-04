@@ -51,10 +51,14 @@
                                         {{ $task->description }}
                                     </td>
                                     <td class="text-center">
-                                        @if ($task->completed)
-                                            <span class="badge bg-success px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                        @if ($task->status === 'completed')
+                                            <span class="badge badge-status-completed px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                        @elseif ($task->status === 'review')
+                                            <span class="badge badge-status-review px-3 py-1 rounded-pill fw-bold">{{ __('messages.review') }}</span>
+                                        @elseif ($task->status === 'in_progress')
+                                            <span class="badge badge-status-in_progress px-3 py-1 rounded-pill fw-bold">{{ __('messages.in_progress') }}</span>
                                         @else
-                                            <span class="badge bg-secondary px-3 py-1 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
+                                            <span class="badge badge-status-pending px-3 py-1 rounded-pill fw-bold">{{ __('messages.pending') }}</span>
                                         @endif
                                     </td>
                                     <td class="d-none d-md-table-cell">{{ $task->created_at->translatedFormat('d M Y H:i') }}</td>

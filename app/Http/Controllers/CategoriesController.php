@@ -25,7 +25,6 @@ class CategoriesController extends Controller
     }
 
     public function store(StoreCategoryRequest $request){
-        Gate::authorize('create', Category::class);
         $validated = $request->validated();
 
         Category::create($validated);
@@ -38,7 +37,6 @@ class CategoriesController extends Controller
     }
 
     public function update(UpdateCategoryRequest $request, Category $category){
-        Gate::authorize('update', $category);
         $validated = $request->validated();
 
         $category->update($validated);

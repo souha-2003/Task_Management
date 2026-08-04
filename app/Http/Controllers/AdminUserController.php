@@ -15,6 +15,7 @@ class AdminUserController extends Controller
     public function index()
     {
         Gate::authorize('manage users');
+        // جلب جميع المستخدمين مع الأدوار والصلاحيات الخاصة بكل مستخدم
         $users = User::with(['roles.permissions', 'permissions'])->get();
         return view('admin.users.index', compact('users'));
     }

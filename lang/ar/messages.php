@@ -28,6 +28,8 @@ return [
     'delete' => 'حذف',
     'completed' => 'مكتملة',
     'pending' => 'قيد الانتظار',
+    'in_progress' => 'قيد العمل',
+    'review' => 'قيد المراجعة',
     'no_tasks' => 'لا توجد مهام حالياً.',
     'select_category' => 'اختر التصنيف',
     'task_created' => 'تم إنشاء المهمة بنجاح.',

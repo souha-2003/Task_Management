@@ -28,6 +28,8 @@ return [
     'delete' => 'Delete',
     'completed' => 'Completed',
     'pending' => 'Pending',
+    'in_progress' => 'In Progress',
+    'review' => 'Review',
     'no_tasks' => 'No tasks available currently.',
     'select_category' => 'Select Category',
     'task_created' => 'Task created successfully.',

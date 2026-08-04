@@ -40,10 +40,12 @@ class StoreTaskRequest extends FormRequest
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'note' => 'nullable|string',
+            'status' => 'nullable|string|in:pending,in_progress,review,completed',
             'categories' => 'nullable|array',
-            'categories.*' => 'exists:categories,id',
+            'categories.*' => 'exists:categories,id', // كل عنصر بالمصفوفة يجب أن يكون معرّفاً في جدول التصنيفات
         ];
 
+        // شرط خاص بالإداريين فقط: يمكنهم تعيين مهمة لمستخدم آخر
         if ($this->user() && ($this->user()->hasRole('admin') || $this->user()->can('edit any task'))) {
             $rules['user_id'] = 'required|exists:users,id';
         }

@@ -4,15 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Category;
 
 class StoreCategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        // فقط للمدير يسمح بإضافة تصنيف جديد @can('create', Category::class)
+        return $this->user()->can('create', Category::class);
     }
 
     /**
