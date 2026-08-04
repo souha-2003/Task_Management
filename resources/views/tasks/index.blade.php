@@ -92,6 +92,11 @@
                                                  <button type="submit" class="btn btn-status-completed btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
                                                      {{ __('messages.completed') }}
                                                  </button>
+                                                 @if($task->completed_at)
+                                                     <div class="mt-1 fw-medium" style="font-size: 0.72rem; color: #94a3b8; line-height: 1.2;">
+                                                         {{ $task->completed_at->translatedFormat('d M H:i') }}
+                                                     </div>
+                                                 @endif
                                              @elseif ($task->status === 'review')
                                                  <button type="submit" class="btn btn-status-review btn-sm rounded-pill px-3 py-1 fw-bold shadow-sm" title="{{ __('Click to change status') }}">
                                                      {{ __('messages.review') }}

@@ -21,19 +21,17 @@ class TaskObserver
             $task->description = strip_tags($task->description);
         }
 
-        // 2. إضافة/إزالة تاريخ إنجاز المهمة تلقائياً في الملاحظات
+        // 2. إدارة تاريخ إنجاز المهمة تلقائياً في حقل completed_at
         if ($task->isDirty('status')) {
             if ($task->status === 'completed') {
-                $timestampNote = "\n[Completed on " . now()->format('Y-m-d H:i') . "]";
-                // نتحقق أولاً لمنع تكرار الإضافة
-                if (!str_contains($task->note ?? '', '[Completed on')) {
-                    $task->note = trim(($task->note ?? '') . $timestampNote);
-                }
+                $task->completed_at = now();
             } else {
-                // إذا أُعيدت إلى أي حالة أخرى غير مكتملة، نقوم بمسح التوقيت تلقائياً
-                if ($task->note) {
-                    $task->note = trim(preg_replace('/\[Completed on [0-9\-:\s]+\]/', '', $task->note));
-                }
+                $task->completed_at = null;
+            }
+
+            // لتنظيف الملاحظات القديمة إذا كانت تحتوي على التوقيت المخزن سابقاً
+            if ($task->note) {
+                $task->note = trim(preg_replace('/\[Completed on [0-9\-:\s]+\]/', '', $task->note));
             }
         }
     }

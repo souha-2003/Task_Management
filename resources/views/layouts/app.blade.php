@@ -21,6 +21,34 @@
         @endif
 
         <style>
+            /* Custom Tooltips styling */
+            .tooltip-inner {
+                background-color: #0f172a !important;
+                color: #f8fafc !important;
+                font-family: inherit;
+                font-size: 0.85rem !important;
+                padding: 8px 14px !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            }
+            .bs-tooltip-top .tooltip-arrow::before, 
+            .bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+                border-top-color: #0f172a !important;
+            }
+            .bs-tooltip-bottom .tooltip-arrow::before, 
+            .bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
+                border-bottom-color: #0f172a !important;
+            }
+            .bs-tooltip-start .tooltip-arrow::before, 
+            .bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
+                border-left-color: #0f172a !important;
+            }
+            .bs-tooltip-end .tooltip-arrow::before, 
+            .bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
+                border-right-color: #0f172a !important;
+            }
+
             :root {
                 --primary-color: #4f46e5;
                 --primary-hover: #4338ca;

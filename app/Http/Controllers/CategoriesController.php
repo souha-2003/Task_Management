@@ -9,10 +9,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoriesController extends Controller
 {
-    public function __construct()
-    {
-        $this->authorizeResource(Category::class, 'category');
-    }
+
 
     public function index(){
         $categories = Category::withCount(['tasks' => function ($query) {

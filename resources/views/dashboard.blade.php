@@ -154,6 +154,11 @@
                                             <td class="text-center">
                                                 @if ($task->status === 'completed')
                                                     <span class="badge badge-status-completed px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                                    @if($task->completed_at)
+                                                        <div class="mt-1 fw-medium" style="font-size: 0.72rem; color: #94a3b8; line-height: 1.2;">
+                                                            {{ $task->completed_at->translatedFormat('d M H:i') }}
+                                                        </div>
+                                                    @endif
                                                 @elseif ($task->status === 'review')
                                                     <span class="badge badge-status-review px-3 py-1 rounded-pill fw-bold">{{ __('messages.review') }}</span>
                                                 @elseif ($task->status === 'in_progress')

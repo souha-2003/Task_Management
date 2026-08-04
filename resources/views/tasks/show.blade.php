@@ -21,7 +21,14 @@
                         <h4 class="text-secondary small text-uppercase fw-bold mb-1">{{ __('messages.status') }}</h4>
                         <div class="d-flex align-items-center gap-3">
                             @if ($task->status === 'completed')
-                                <span class="badge badge-status-completed px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="badge badge-status-completed px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                    @if($task->completed_at)
+                                        <div class="mt-1 fw-medium" style="font-size: 0.75rem; color: #94a3b8;">
+                                            📅 {{ $task->completed_at->translatedFormat('d M Y H:i') }}
+                                        </div>
+                                    @endif
+                                </div>
                             @elseif ($task->status === 'review')
                                 <span class="badge badge-status-review px-3 py-2 fs-6 rounded-pill fw-bold">{{ __('messages.review') }}</span>
                             @elseif ($task->status === 'in_progress')

@@ -6,10 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Searchable;
 use App\Traits\FilterableByCompletion;
+use Illuminate\Support\Facades\Cache;
 
 class Task extends Model
 {
     use SoftDeletes, Searchable, FilterableByCompletion;
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        $clearCache = function ($task) {
+            if ($task->user_id) {
+                Cache::forget("dashboard_stats_user_{$task->user_id}");
+            }
+        };
+
+        static::saved($clearCache);
+        static::deleted($clearCache);
+        static::restored($clearCache);
+    }
 
     /**
      * Columns that can be searched.
@@ -30,6 +47,7 @@ class Task extends Model
         'description',
         'note',
         'status',
+        'completed_at',
         'user_id', 
     ];
 
@@ -40,7 +58,9 @@ class Task extends Model
      */
     protected function casts(): array
     {
-        return [];
+        return [
+            'completed_at' => 'datetime',
+        ];
     }
 
     /**

@@ -1,17 +1,14 @@
 <x-app-layout>
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="d-flex align-items-center gap-3">
+    <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 mb-4">
+        <div>
             <h2 class="fw-bold mb-0 text-dark">🏷️ {{ __('Category') }}: {{ $category->name }}</h2>
-            <span class="badge px-3 py-2 text-capitalize" style="font-size: 0.9rem; background-color: {{ $category->color }}1a; color: {{ $category->color }}; border: 1px solid {{ $category->color }}33;">
-                {{ $category->name }}
-            </span>
         </div>
         <div class="d-flex gap-2">
-            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary px-3 fw-semibold">
+            <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary px-3 fw-semibold text-nowrap">
                 &larr; {{ __('messages.back_to_list') }}
             </a>
             @can('manage categories')
-            <a href="{{ route('categories.edit', $category) }}" class="btn btn-warning px-3 fw-semibold">
+            <a href="{{ route('categories.edit', $category) }}" class="btn btn-warning px-3 fw-semibold text-nowrap">
                 {{ __('messages.edit') }}
             </a>
             @endcan
@@ -53,6 +50,11 @@
                                     <td class="text-center">
                                         @if ($task->status === 'completed')
                                             <span class="badge badge-status-completed px-3 py-1 rounded-pill fw-bold">{{ __('messages.completed') }}</span>
+                                            @if($task->completed_at)
+                                                <div class="mt-1 fw-medium" style="font-size: 0.72rem; color: #94a3b8; line-height: 1.2;">
+                                                    {{ $task->completed_at->translatedFormat('d M H:i') }}
+                                                </div>
+                                            @endif
                                         @elseif ($task->status === 'review')
                                             <span class="badge badge-status-review px-3 py-1 rounded-pill fw-bold">{{ __('messages.review') }}</span>
                                         @elseif ($task->status === 'in_progress')
