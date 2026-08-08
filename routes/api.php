@@ -8,17 +8,19 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('throttle:api')->group(function () {
+    Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/user', function (Request $request) {
+            return new UserResource($request->user());
+        });
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::apiResource('tasks', TaskApiController::class);
+        Route::apiResource('categories', CategoryApiController::class);
+        
+        // User administration routes
+        Route::get('users', [UserApiController::class, 'index']);
+        Route::put('users/{user}', [UserApiController::class, 'update']);
     });
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::apiResource('tasks', TaskApiController::class);
-    Route::apiResource('categories', CategoryApiController::class);
-    
-    // User administration routes
-    Route::get('users', [UserApiController::class, 'index']);
-    Route::put('users/{user}', [UserApiController::class, 'update']);
 });
