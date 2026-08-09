@@ -16,8 +16,8 @@ Route::middleware('throttle:api')->group(function () {
             return new UserResource($request->user());
         });
         Route::post('/logout', [AuthController::class, 'logout']);
-        Route::apiResource('tasks', TaskApiController::class);
-        Route::apiResource('categories', CategoryApiController::class);
+        Route::apiResource('tasks', TaskApiController::class)->names('api.tasks');
+        Route::apiResource('categories', CategoryApiController::class)->names('api.categories');
         
         // User administration routes
         Route::get('users', [UserApiController::class, 'index']);

@@ -7,7 +7,9 @@ use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('lang/{locale}', [LocaleController::class, 'switch'])->name('lang.switch');
 
@@ -31,6 +33,23 @@ Route::middleware('auth')->group(function () {
 
     // Categories CRUD Routes
     Route::resource('categories', CategoriesController::class);
+
+    // Save device token for Firebase
+    Route::post('/update-device-token', function (Request $request) {
+        $request->validate([
+            'device_token' => 'required|string',
+        ]);
+        auth()->user()->update(['device_token' => $request->device_token]);
+        return response()->json(['success' => true]);
+    })->name('device_token.update');
+
+    // Notifications System Routes
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/history', [NotificationController::class, 'history'])->name('notifications.history');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.readAll');
+    Route::delete('/notifications/clear-all', [NotificationController::class, 'clearAll'])->name('notifications.clearAll');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
    
     // Admin Management Routes
     Route::prefix('admin')->group(function () {

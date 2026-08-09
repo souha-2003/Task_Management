@@ -101,4 +101,15 @@ return [
     'assign_to_user' => 'تعيين للمستخدم',
     'task_owner' => 'المسؤول عن المهمة',
     'unknown' => 'غير معروف',
+
+    // Notifications translations
+    'new_task_notification_title' => 'مهمة جديدة مسندة إليك!',
+    'new_task_notification_body' => 'تم تعيين مهمة جديدة لك بعنوان: :title',
+    'view_all_notifications' => 'عرض كل الإشعارات',
+    'mark_all_read' => 'تحديد الكل كمقروء',
+    'no_notifications' => 'لا توجد إشعارات حالياً',
+    'notifications_history' => 'أرشيف الإشعارات',
+    'view_task' => 'عرض المهمة',
+    'task_created_by_employee_title' => 'مهمة جديدة من موظف!',
+    'task_created_by_employee_body' => 'قام :name بإضافة مهمة جديدة بعنوان: :title',
 ];

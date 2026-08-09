@@ -70,7 +70,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        // استدعاء البوليسي داخل الكونترولر لعدم وجود ملف ريكويست كما في الستور والابديت
+        // استدعاء البوليسي داخل الكنترولر لعدم وجود ملف ريكويست كما في الستور والابديت
         Gate::authorize('view', $task);
 
         $task->load('categories');

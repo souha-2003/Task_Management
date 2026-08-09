@@ -69,6 +69,7 @@
                 background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                 backdrop-filter: blur(10px);
+                z-index: 1050 !important; /* لضمان ظهور الناف بار وقوائمه فوق كل محتوى الصفحة */
             }
             .navbar-brand {
                 font-size: 1.25rem;
@@ -279,6 +280,22 @@
                 background-color: #f8fafc !important;
                 border-color: #e2e8f0 !important;
             }
+
+            /* حل مشكلة تداخل وظهور قائمة الإشعارات خلف المحتوى وتحت الجدول */
+            #notificationCenterDropdown .dropdown-menu {
+                z-index: 1080 !important;
+            }
+            
+            /* تحسين استجابة القائمة على الشاشات الصغيرة لتجنب خروجها عن الشاشة وتداخلها */
+            @media (max-width: 991.98px) {
+                #notificationCenterDropdown .dropdown-menu {
+                    display: none !important; /* إلغاء ومنع القائمة المنسدلة تماماً على الموبايل والاعتماد على الانتقال الفوري */
+                }
+                /* لضمان عدم قص القائمة داخل القائمة المنسدلة للناف بار */
+                .navbar-collapse {
+                    overflow: visible !important;
+                }
+            }
         </style>
     </head>
     <body>
@@ -342,6 +359,34 @@
                                 </ul>
                             </div>
 
+                             <!-- Notifications Bell Dropdown -->
+                            <div class="dropdown me-1" id="notificationCenterDropdown">
+                                <button class="btn btn-outline-light btn-sm position-relative" type="button" id="bellDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 50%; width: 34px; height: 34px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                    🔔
+                                    <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size: 0.65rem;">
+                                        0
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow py-0" aria-labelledby="bellDropdown" style="width: 360px; max-height: 400px; overflow-y: auto; border-radius: 12px;">
+                                    <div class="p-3 border-bottom d-flex align-items-center justify-content-between gap-2 bg-light" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                                        <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.9rem;">🔔 {{ app()->getLocale() == 'ar' ? 'الإشعارات' : 'Notifications' }}</h6>
+                                        <button onclick="markAllNotificationsAsRead(event)" class="btn btn-link btn-sm p-0 text-primary text-decoration-none fw-semibold" style="font-size: 0.75rem;">
+                                            {{ app()->getLocale() == 'ar' ? 'تحديد الكل كمقروء' : 'Mark all read' }}
+                                        </button>
+                                    </div>
+                                    <div id="notificationList" class="list-group list-group-flush">
+                                        <div class="p-4 text-center text-secondary small">
+                                            {{ app()->getLocale() == 'ar' ? 'جاري التحميل...' : 'Loading...' }}
+                                        </div>
+                                    </div>
+                                    <div class="p-2 border-top text-center bg-light" style="border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                                        <a href="{{ route('notifications.history') }}" class="text-primary text-decoration-none fw-semibold" style="font-size: 0.8rem;">
+                                            {{ app()->getLocale() == 'ar' ? 'عرض كل الإشعارات 🔗' : 'View All Notifications 🔗' }}
+                                        </a>
+                                    </div>
+                                </ul>
+                            </div>
+
                             <!-- User Settings Dropdown -->
                             <div class="dropdown">
                                 <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -392,6 +437,349 @@
                 </div>
             </footer>
         </div>
+
+        <!-- Firebase SDKs Compatibility -->
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
+
+        <script>
+            // إعدادات Firebase الخاصة بمشروعك
+            const firebaseConfig = {
+                apiKey: "AIzaSyDmKeP3bqBfDYet_usW46t89IxoQds-DdA",
+                authDomain: "task-management-c3bff.firebaseapp.com",
+                projectId: "task-management-c3bff",
+                storageBucket: "task-management-c3bff.firebasestorage.app",
+                messagingSenderId: "731879977881",
+                appId: "1:731879977881:web:53e7b1f5aae69734539908",
+                measurementId: "G-HXDX8LDZ61"
+            };
+
+            // تهيئة الفايربيز
+            firebase.initializeApp(firebaseConfig);
+            const messaging = firebase.messaging();
+
+            // طلب إذن الإشعارات والحصول على الـ Token
+            Notification.requestPermission()
+                .then((permission) => {
+                    if (permission === 'granted') {
+                        return messaging.getToken({ vapidKey: 'BEUKgQcCrD-_M5dKuR0v5QzE5Up5vitLgcATCX9mVnHZU4lfdY9GP8oBrJ8MrqUy0Q0WD7v87F30wdyfcYCi9FE' });
+                    } else {
+                        throw new Error('لم يتم قبول صلاحية الإشعارات.');
+                    }
+                })
+                .then((token) => {
+                    console.log('Firebase Device Token:', token);
+                    
+                    // إرسال الرمز للباك إند لحفظه
+                    axios.post('/update-device-token', {
+                        device_token: token
+                    })
+                    .then(response => {
+                        console.log('تم حفظ رمز الجهاز بنجاح في قاعدة البيانات.');
+                    })
+                    .catch(error => {
+                        console.error('حدث خطأ أثناء حفظ الرمز:', error);
+                    });
+                })
+                .catch((err) => {
+                    console.warn('تعذر الحصول على صلاحية الإشعارات أو رمز الجهاز:', err);
+                });
+
+            // قاموس الترجمات للواجهة الأمامية لترجمة الإشعارات اللحظية تلقائياً
+            window.translations = {
+                new_task_notification_title: "{{ __('messages.new_task_notification_title') }}",
+                new_task_notification_body: "{{ __('messages.new_task_notification_body', ['title' => '{title}']) }}",
+                task_created_by_employee_title: "{{ __('messages.task_created_by_employee_title') }}",
+                task_created_by_employee_body: "{{ __('messages.task_created_by_employee_body', ['name' => '{name}', 'title' => '{title}']) }}",
+            };
+
+            // التعامل مع الإشعارات والموقع مفتوح في الواجهة (Foreground)
+            messaging.onMessage((payload) => {
+                console.log('تم استقبال إشعار في الواجهة:', payload);
+                
+                let title = payload.notification?.title;
+                let body = payload.notification?.body;
+                
+                const data = payload.data || {};
+                
+                // تحقق أمني لمنع عرض الإشعار لمستخدم غير مستهدف (حتى لو كانت الرموز متداخلة)
+                const currentUserId = "{{ Auth::id() }}";
+                if (data.recipient_id && data.recipient_id !== currentUserId) {
+                    console.log('تم تجاهل الإشعار لأنه غير موجه للمستخدم الحالي.');
+                    return;
+                }
+
+                if (data.title_key) {
+                    const key = data.title_key.replace('messages.', '');
+                    if (window.translations && window.translations[key]) {
+                        title = window.translations[key];
+                    }
+                }
+                if (data.body_key) {
+                    const key = data.body_key.replace('messages.', '');
+                    if (window.translations && window.translations[key]) {
+                        let translatedBody = window.translations[key];
+                        if (data.body_replace_title) {
+                            translatedBody = translatedBody.replaceAll('{title}', data.body_replace_title);
+                        }
+                        if (data.body_replace_name) {
+                            translatedBody = translatedBody.replaceAll('{name}', data.body_replace_name);
+                        }
+                        body = translatedBody;
+                    }
+                }
+
+                // إظهار التنبيه الاحترافي الجذاب فقط داخل الموقع دون تكرار
+                showCustomToast(title, body, data.task_id);
+
+                // تحديث مركز الإشعارات (الجرس) تلقائياً في الخلفية
+                fetchNotifications();
+            });
+
+            function showCustomToast(title, body, taskId) {
+                const container = document.getElementById('custom-toast-container');
+                if (!container) return;
+
+                // إضافة أنيميشن النبض لصفحة الهيد إذا لم يكن موجوداً
+                if (!document.getElementById('toast-pulse-animation')) {
+                    const style = document.createElement('style');
+                    style.id = 'toast-pulse-animation';
+                    style.innerHTML = `
+                        @keyframes toast-pulse {
+                            0% { transform: scale(0.95); opacity: 1; }
+                            50% { transform: scale(1.3); opacity: 0; }
+                            100% { transform: scale(0.95); opacity: 0; }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+
+                const isRtl = document.dir === 'rtl';
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    background: rgba(30, 41, 59, 0.95);
+                    backdrop-filter: blur(16px);
+                    -webkit-backdrop-filter: blur(16px);
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-left: ${isRtl ? 'none' : '4px solid #6366f1'};
+                    border-right: ${isRtl ? '4px solid #6366f1' : 'none'};
+                    color: #f8fafc;
+                    padding: 16px;
+                    border-radius: 16px;
+                    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+                    width: 350px;
+                    pointer-events: auto;
+                    transform: translateX(${isRtl ? '-380px' : '380px'});
+                    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+                    opacity: 0;
+                    display: flex;
+                    gap: 12px;
+                    position: relative;
+                `;
+
+                let viewLink = '';
+                if (taskId) {
+                    const linkText = isRtl ? 'عرض التفاصيل 🔍' : 'View Details 🔍';
+                    viewLink = `<a href="/tasks/${taskId}" class="btn btn-sm btn-primary mt-1" style="font-weight: 600; width: fit-content; border-radius: 8px; padding: 5px 14px; font-size: 0.78rem; background-color: #6366f1; border: none; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);">${linkText}</a>`;
+                }
+
+                const closeBtnHtml = `<button onclick="this.closest('[style*=\\'pointer-events: auto\\']').remove()" style="position: absolute; top: 12px; right: ${isRtl ? 'auto' : '12px'}; left: ${isRtl ? '12px' : 'auto'}; background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.1rem; line-height: 1; padding: 0;" onmouseover="this.style.color='#ffffff'" onmouseout="this.style.color='#94a3b8'">&times;</button>`;
+
+                toast.innerHTML = `
+                    <!-- أيقونة الجرس متفاعلة النبض -->
+                    <div style="flex-shrink: 0; position: relative; width: 38px; height: 38px; background: rgba(99, 102, 241, 0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6366f1;">
+                        <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: rgba(99, 102, 241, 0.4); animation: toast-pulse 2s infinite;"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px; z-index: 1;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                        </svg>
+                    </div>
+
+                    <!-- النصوص -->
+                    <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 4px; ${isRtl ? 'text-align: right; padding-left: 10px;' : 'text-align: left; padding-right: 10px;'}">
+                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                            <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6366f1; font-weight: 700;">
+                                ${isRtl ? 'إشعار جديد' : 'New Notification'}
+                            </span>
+                            <span style="font-size: 0.68rem; color: #94a3b8;">${isRtl ? 'الآن' : 'Just now'}</span>
+                        </div>
+                        <h4 style="margin: 0; font-size: 0.92rem; font-weight: 600; color: #ffffff;">${title}</h4>
+                        <p style="margin: 0 0 4px 0; font-size: 0.8rem; color: #cbd5e1; line-height: 1.4;">${body}</p>
+                        ${viewLink}
+                    </div>
+                    ${closeBtnHtml}
+                `;
+
+                container.appendChild(toast);
+
+                // حركة الظهور
+                requestAnimationFrame(() => {
+                    toast.style.transform = 'translateX(0)';
+                    toast.style.opacity = '1';
+                });
+
+                // الاختفاء التلقائي بعد 30 ثانية
+                setTimeout(() => {
+                    toast.style.transform = `translateX(${isRtl ? '-380px' : '380px'})`;
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 500);
+                }, 15000);
+            }
+
+            // تعليم إشعار واحد كمقروء دون مغادرة الصفحة
+            window.markSingleAsRead = function(event, id) {
+                if (event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+                axios.post(`/notifications/${id}/read`)
+                    .then(() => {
+                        fetchNotifications();
+                        // إذا كنا بصفحة الأرشيف، نحدثها أيضاً
+                        if (window.location.pathname.includes('/notifications/history')) {
+                            window.location.reload();
+                        }
+                    })
+                    .catch(err => console.error('Error marking notification as read:', err));
+            };
+
+            // جلب الإشعارات من قاعدة البيانات وتحديث الواجهة
+            function fetchNotifications() {
+                axios.get('/notifications')
+                    .then(response => {
+                        const notifications = response.data.notifications;
+                        const unreadCount = response.data.unread_count;
+
+                        // تحديث شارة العدد الأحمر
+                        const badge = document.getElementById('notificationBadge');
+                        if (unreadCount > 0) {
+                            badge.textContent = unreadCount;
+                            badge.classList.remove('d-none');
+                        } else {
+                            badge.classList.add('d-none');
+                        }
+
+                        // تحديث القائمة المنسدلة
+                        const list = document.getElementById('notificationList');
+                        list.innerHTML = '';
+
+                        const isRtl = document.dir === 'rtl';
+
+                        if (notifications.length === 0) {
+                            list.innerHTML = `
+                                <div class="p-4 text-center text-secondary small">
+                                    ${isRtl ? 'لا توجد إشعارات حالياً' : 'No notifications found'}
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        notifications.forEach(notification => {
+                            const isUnread = !notification.read_at;
+                            const bgColor = isUnread ? 'rgba(99, 102, 241, 0.05)' : 'rgba(241, 245, 249, 0.4)';
+                            const titleColor = isUnread ? '#1e293b' : '#475569';
+                            const taskId = notification.data.task_id;
+
+                            // نقطة الإشعار غير المقروء الزرقاء المضيئة، أو علامة الصح للإشعار المقروء
+                            const unreadDot = isUnread 
+                                ? `<span style="width: 8px; height: 8px; background-color: #6366f1; border-radius: 50%; display: inline-block; flex-shrink: 0; box-shadow: 0 0 6px #6366f1;"></span>` 
+                                : '';
+
+                            // زر تعليم الإشعار كمقروء بشكل منفرد
+                            const markReadBtn = isUnread
+                                ? `<button onclick="markSingleAsRead(event, '${notification.id}')" class="btn btn-sm p-0 border-0 d-flex align-items-center justify-content-center" title="${isRtl ? 'تحديد كمقروء' : 'Mark as read'}" style="width: 20px; height: 20px; border-radius: 50%; color: #6366f1; background: rgba(99, 102, 241, 0.1); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='rgba(99, 102, 241, 0.2)'" onmouseout="this.style.background='rgba(99, 102, 241, 0.1)'">
+                                    ✔
+                                   </button>`
+                                : '';
+
+                            const item = document.createElement('a');
+                            item.href = `/tasks/${taskId}`;
+                            item.className = 'list-group-item list-group-item-action p-3';
+                            item.style.cssText = `
+                                background-color: ${bgColor};
+                                border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+                                transition: background-color 0.2s;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 4px;
+                                position: relative;
+                                text-align: ${isRtl ? 'right' : 'left'};
+                                text-decoration: none;
+                            `;
+
+                            item.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center gap-2">
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        ${unreadDot}
+                                        <strong style="font-size: 0.85rem; color: ${titleColor}; font-weight: ${isUnread ? '700' : '500'};">
+                                            ${notification.data.title}
+                                        </strong>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span style="font-size: 0.68rem; color: #94a3b8; white-space: nowrap; flex-shrink: 0;">
+                                            ${new Date(notification.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                        </span>
+                                        ${markReadBtn}
+                                    </div>
+                                </div>
+                                <span style="font-size: 0.78rem; color: ${isUnread ? '#475569' : '#64748b'}; line-height: 1.4; padding-${isRtl ? 'right' : 'left'}: 14px;">
+                                    ${notification.data.body}
+                                </span>
+                            `;
+
+                            // عند الضغط على الإشعار، يتم تمييزه كمقروء ثم الانتقال
+                            item.addEventListener('click', function(e) {
+                                e.preventDefault();
+                                axios.post(`/notifications/${notification.id}/read`)
+                                    .then(() => {
+                                        window.location.href = `/tasks/${taskId}`;
+                                    })
+                                    .catch(() => {
+                                        window.location.href = `/tasks/${taskId}`;
+                                    });
+                            });
+
+                            list.appendChild(item);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching notifications:', error);
+                    });
+            }
+
+            // تحديد كل الإشعارات كمقروءة
+            function markAllNotificationsAsRead(event) {
+                if (event) event.stopPropagation(); // منع إغلاق القائمة المنسدلة عند الضغط
+
+                axios.post('/notifications/read-all')
+                    .then(() => {
+                        fetchNotifications();
+                    })
+                    .catch(error => {
+                        console.error('Error marking all as read:', error);
+                    });
+            }
+
+            // جلب الإشعارات لأول مرة عند تحميل الصفحة وإعداد الانتقال الفوري للموبايل
+            document.addEventListener('DOMContentLoaded', function() {
+                fetchNotifications();
+                
+                const bellBtn = document.getElementById('bellDropdown');
+                if (bellBtn) {
+                    bellBtn.addEventListener('click', function(e) {
+                        if (window.innerWidth < 992) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = "{{ route('notifications.history') }}";
+                        }
+                    });
+                }
+            });
+        </script>
+
+        <!-- حاوية التوست الأنيقة -->
+        <div id="custom-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none;"></div>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {

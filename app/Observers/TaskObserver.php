@@ -85,6 +85,11 @@ class TaskObserver
     public function deleted(Task $task): void
     {
         Log::info("TaskObserver: Task ID {$task->id} has been deleted.");
+
+        // حذف تلقائي لجميع الإشعارات المرتبطة بهذه المهمة لتجنب خطأ 404
+        \Illuminate\Support\Facades\DB::table('notifications')
+            ->where('data->task_id', $task->id)
+            ->delete();
     }
 
     /**

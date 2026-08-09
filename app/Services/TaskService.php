@@ -6,6 +6,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use App\Events\TaskAssigned;
 
 class TaskService
 {
@@ -38,7 +39,7 @@ class TaskService
      */
     public function createTask(User $user, array $data): Task
     {
-        return DB::transaction(function () use ($user, $data) {
+        $task = DB::transaction(function () use ($user, $data) {
             $task = $user->tasks()->create($data);
 
             if (isset($data['categories'])) {
@@ -47,6 +48,10 @@ class TaskService
 
             return $task;
         });
+
+        event(new TaskAssigned($task));
+
+        return $task;
     }
 
     /**

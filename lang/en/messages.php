@@ -101,4 +101,15 @@ return [
     'assign_to_user' => 'Assign to User',
     'task_owner' => 'Task Owner',
     'unknown' => 'Unknown',
+
+    // Notifications translations
+    'new_task_notification_title' => 'New Task Assigned!',
+    'new_task_notification_body' => 'A new task has been assigned to you: :title',
+    'view_all_notifications' => 'View All Notifications',
+    'mark_all_read' => 'Mark all as read',
+    'no_notifications' => 'No notifications found',
+    'notifications_history' => 'Notifications History',
+    'view_task' => 'View Task',
+    'task_created_by_employee_title' => 'New Task from Employee!',
+    'task_created_by_employee_body' => ':name created a new task: :title',
 ];

@@ -9,6 +9,9 @@ use App\Observers\TaskObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Event;
+use App\Events\TaskAssigned;
+use App\Listeners\SendNewTaskPushNotification;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,9 +29,16 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Task::observe(TaskObserver::class);
+        \Illuminate\Pagination\Paginator::useBootstrapFive();
+
+        // تم التعليق لأن لارافيل 11 يقوم باكتشاف الأحداث وتوصيلها تلقائياً (Event Discovery)
+        // Event::listen(
+        //     TaskAssigned::class,
+        //     SendNewTaskPushNotification::class
+        // );
 
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
         });
 
         RateLimiter::for('login', function (Request $request) {
