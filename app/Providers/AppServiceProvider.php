@@ -31,12 +31,10 @@ class AppServiceProvider extends ServiceProvider
         Task::observe(TaskObserver::class);
         \Illuminate\Pagination\Paginator::useBootstrapFive();
 
-        // تم التعليق لأن لارافيل 11 يقوم باكتشاف الأحداث وتوصيلها تلقائياً (Event Discovery)
-        // ومسحه من هنا يمنع تكرار الإشعارات (وصول إشعارين لنفس المهمة)
-        // Event::listen(
-        //     TaskAssigned::class,
-        //     SendNewTaskPushNotification::class
-        // );
+        Event::listen(
+            TaskAssigned::class,
+            SendNewTaskPushNotification::class
+        );
 
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());
