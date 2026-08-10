@@ -462,7 +462,18 @@
             Notification.requestPermission()
                 .then((permission) => {
                     if (permission === 'granted') {
-                        return messaging.getToken({ vapidKey: 'BEUKgQcCrD-_M5dKuR0v5QzE5Up5vitLgcATCX9mVnHZU4lfdY9GP8oBrJ8MrqUy0Q0WD7v87F30wdyfcYCi9FE' });
+                        if ('serviceWorker' in navigator) {
+                            return navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                                .then((registration) => {
+                                    console.log('تم تسجيل Service Worker بنجاح:', registration);
+                                    return messaging.getToken({
+                                        serviceWorkerRegistration: registration,
+                                        vapidKey: 'BEUKgQcCrD-_M5dKuR0v5QzE5Up5vitLgcATCX9mVnHZU4lfdY9GP8oBrJ8MrqUy0Q0WD7v87F30wdyfcYCi9FE'
+                                    });
+                                });
+                        } else {
+                            throw new Error('المتصفح لا يدعم Service Worker.');
+                        }
                     } else {
                         throw new Error('لم يتم قبول صلاحية الإشعارات.');
                     }
@@ -531,6 +542,18 @@
 
                 // إظهار التنبيه الاحترافي الجذاب فقط داخل الموقع دون تكرار
                 showCustomToast(title, body, data.task_id);
+
+                // إظهار إشعار النظام الافتراضي للمتصفح أيضاً في نفس الوقت
+                if (Notification.permission === 'granted') {
+                    try {
+                        new Notification(title, {
+                            body: body,
+                            icon: '/favicon.ico'
+                        });
+                    } catch (e) {
+                        console.warn('تعذر عرض إشعار النظام في الواجهة:', e);
+                    }
+                }
 
                 // تحديث مركز الإشعارات (الجرس) تلقائياً في الخلفية
                 fetchNotifications();

@@ -32,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Pagination\Paginator::useBootstrapFive();
 
         // تم التعليق لأن لارافيل 11 يقوم باكتشاف الأحداث وتوصيلها تلقائياً (Event Discovery)
+        // ومسحه من هنا يمنع تكرار الإشعارات (وصول إشعارين لنفس المهمة)
         // Event::listen(
         //     TaskAssigned::class,
         //     SendNewTaskPushNotification::class
