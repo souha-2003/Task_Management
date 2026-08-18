@@ -21,7 +21,7 @@ class NotificationController extends Controller
                 'id' => $notification->id,
                 'data' => [
                     'task_id' => $data['task_id'] ?? null,
-                    'title' => isset($data['title_key']) ? __($data['title_key']) : ($data['title'] ?? ''),
+                    'title' => isset($data['title_key']) ? __($data['title_key'], $data['body_replace'] ?? []) : ($data['title'] ?? ''),
                     'body' => isset($data['body_key']) ? __($data['body_key'], $data['body_replace'] ?? []) : ($data['body'] ?? ''),
                 ],
                 'read_at' => $notification->read_at,

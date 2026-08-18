@@ -500,8 +500,10 @@
             window.translations = {
                 new_task_notification_title: "{{ __('messages.new_task_notification_title') }}",
                 new_task_notification_body: "{{ __('messages.new_task_notification_body', ['title' => '{title}']) }}",
-                task_created_by_employee_title: "{{ __('messages.task_created_by_employee_title') }}",
-                task_created_by_employee_body: "{{ __('messages.task_created_by_employee_body', ['name' => '{name}', 'title' => '{title}']) }}",
+                task_created_by_admin_title: "{{ __('messages.task_created_by_admin_title') }}",
+                task_created_by_admin_body: "{{ __('messages.task_created_by_admin_body', ['title' => '{title}']) }}",
+                task_created_by_user_title: "{{ __('messages.task_created_by_user_title', ['name' => '{name}']) }}",
+                task_created_by_user_body: "{{ __('messages.task_created_by_user_body', ['name' => '{name}', 'title' => '{title}']) }}",
             };
 
             // التعامل مع الإشعارات والموقع مفتوح في الواجهة (Foreground)
@@ -523,7 +525,14 @@
                 if (data.title_key) {
                     const key = data.title_key.replace('messages.', '');
                     if (window.translations && window.translations[key]) {
-                        title = window.translations[key];
+                        let translatedTitle = window.translations[key];
+                        if (data.body_replace_name) {
+                            translatedTitle = translatedTitle.replaceAll('{name}', data.body_replace_name);
+                        }
+                        if (data.body_replace_title) {
+                            translatedTitle = translatedTitle.replaceAll('{title}', data.body_replace_title);
+                        }
+                        title = translatedTitle;
                     }
                 }
                 if (data.body_key) {
@@ -543,7 +552,7 @@
                 // إظهار التنبيه الاحترافي الجذاب فقط داخل الموقع دون تكرار
                 showCustomToast(title, body, data.task_id);
 
-                // إظهار إشعار النظام الافتراضي للمتصفح أيضاً في نفس الوقت
+                // إشعار النظام الافتراضي للمتصفح
                 if (Notification.permission === 'granted') {
                     try {
                         new Notification(title, {

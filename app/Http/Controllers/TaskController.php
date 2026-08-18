@@ -62,7 +62,7 @@ class TaskController extends Controller
 
         $this->taskService->createTask($targetUser, $data);
 
-        return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+        return redirect()->route('tasks.index')->with('success', __('messages.task_created'));
     }
 
     /**
@@ -109,7 +109,7 @@ class TaskController extends Controller
 
         $this->taskService->updateTask($task, $data);
 
-        return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+        return redirect()->route('tasks.index')->with('success', __('messages.task_updated'));
     }
 
     /**
@@ -121,7 +121,7 @@ class TaskController extends Controller
 
         $this->taskService->deleteTask($task);
 
-        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+        return redirect()->route('tasks.index')->with('success', __('messages.task_deleted'));
     }
 
     /**
@@ -133,7 +133,7 @@ class TaskController extends Controller
 
         $this->taskService->toggleTaskStatus($task);
 
-        return redirect()->back()->with('success', 'Task status updated successfully!');
+        return redirect()->back()->with('success', __('messages.task_status_updated'));
     }
 }
 

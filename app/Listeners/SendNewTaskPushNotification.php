@@ -51,8 +51,8 @@ class SendNewTaskPushNotification implements ShouldQueue
                 if ($admin->device_token) {
                     $this->sendPushNotification($admin->device_token, $title, $body, $task->id, [
                         'recipient_id' => (string) $admin->id,
-                        'title_key' => 'messages.task_created_by_employee_title',
-                        'body_key' => 'messages.task_created_by_employee_body',
+                        'title_key' => 'messages.task_created_by_user_title',
+                        'body_key' => 'messages.task_created_by_user_body',
                         'body_replace_name' => $creator->name,
                         'body_replace_title' => $task->title,
                     ]);
@@ -68,7 +68,7 @@ class SendNewTaskPushNotification implements ShouldQueue
         }
 
         // 3. الحالة الطبيعية: إرسال التنبيه للمستخدم المسندة إليه المهمة (من الأدمن)
-        $user->notify(new \App\Notifications\TaskAssignedNotification($task));
+        $user->notify(new \App\Notifications\TaskAssignedNotification($task, $creator));
 
         if ($user->device_token) {
             $title = "مهمة جديدة مسندة إليك!";

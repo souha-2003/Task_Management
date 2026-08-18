@@ -142,7 +142,7 @@
     <!-- Pagination -->
     @if ($tasks->hasPages())
         <div class="d-flex justify-content-center mt-4">
-            {{ $tasks->links('pagination::bootstrap-5') }}
+            {{ $tasks->onEachSide(1)->links('pagination::bootstrap-5') }}
         </div>
     @endif
 

@@ -35,7 +35,7 @@
                         @php
                             $isUnread = is_null($notification->read_at);
                             $taskId = $notification->data['task_id'] ?? '#';
-                            $title = isset($notification->data['title_key']) ? __($notification->data['title_key']) : ($notification->data['title'] ?? 'Notification');
+                            $title = isset($notification->data['title_key']) ? __($notification->data['title_key'], $notification->data['body_replace'] ?? []) : ($notification->data['title'] ?? 'Notification');
                             $body = isset($notification->data['body_key']) ? __($notification->data['body_key'], $notification->data['body_replace'] ?? []) : ($notification->data['body'] ?? '');
                         @endphp
                         
@@ -93,7 +93,7 @@
                 </div>
                 <!-- Pagination -->
                 <div class="p-4 d-flex justify-content-center border-top">
-                    {{ $notifications->links() }}
+                    {{ $notifications->onEachSide(1)->links() }}
                 </div>
             @endif
         </div>

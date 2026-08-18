@@ -31,10 +31,10 @@ class AppServiceProvider extends ServiceProvider
         Task::observe(TaskObserver::class);
         \Illuminate\Pagination\Paginator::useBootstrapFive();
 
-        Event::listen(
-            TaskAssigned::class,
-            SendNewTaskPushNotification::class
-        );
+        // Event::listen(
+        //     TaskAssigned::class,
+        //     SendNewTaskPushNotification::class
+        // );
 
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(5)->by($request->user()?->id ?: $request->ip());

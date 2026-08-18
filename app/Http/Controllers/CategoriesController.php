@@ -27,7 +27,7 @@ class CategoriesController extends Controller
         $validated = $request->validated();
 
         Category::create($validated);
-        return redirect()->route('categories.index')->with('success', 'Category created successfully!');
+        return redirect()->route('categories.index')->with('success', __('messages.category_created'));
     }
 
     public function edit(Category $category){
@@ -38,7 +38,7 @@ class CategoriesController extends Controller
         $validated = $request->validated();
 
         $category->update($validated);
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully!');
+        return redirect()->route('categories.index')->with('success', __('messages.category_updated'));
     }
 
     public function show(Category $category){
@@ -49,6 +49,6 @@ class CategoriesController extends Controller
 
     public function destroy(Category $category){
         $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully!');
+        return redirect()->route('categories.index')->with('success', __('messages.category_deleted'));
     }
 }

@@ -40,8 +40,8 @@ class TaskAssignedNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $creatorName = $this->creator ? $this->creator->name : 'System';
-        $isSubmittingAdmin = $this->creator && $this->creator->hasRole('admin');
+        $creatorName = $this->creator ? $this->creator->name : 'Admin';
+        $isSubmittingAdmin = !$this->creator || $this->creator->hasRole('admin');
 
         if ($isSubmittingAdmin) {
             return [
