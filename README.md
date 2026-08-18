@@ -1,48 +1,54 @@
 # 📋 Task Management System
 
-A robust and modern **Task Management Application** built with **Laravel 12**, featuring full task lifecycle tracking, role-based access control (RBAC), real-time push notifications via Firebase Cloud Messaging (FCM HTTP v1), multi-language localization, and a secured RESTful API with Laravel Sanctum.
+A robust, enterprise-grade **Task Management Application** built with **Laravel 12**, featuring complete task lifecycle management, multi-guard authentication, role-based authorization (RBAC), real-time push notifications via Firebase Cloud Messaging (FCM HTTP v1), multi-language support, and a secured RESTful API.
 
 ---
 
 ## 🚀 Technologies & Libraries
 
-### 🔹 Backend Stack
+### 🔹 Authentication & Authorization Architecture
+- **[Laravel Breeze](https://laravel.com/docs/starter-kits#laravel-breeze)**: Comprehensive web authentication scaffolding (Login, Registration, Password Reset, Profile Management, Email Verification, and Session Security).
+- **[Spatie Laravel-Permission (^6.25)](https://spatie.be/docs/laravel-permission)**: Fine-grained Role-Based Access Control (RBAC) supporting dynamic Roles, Permissions, Middleware guards, and Blade authorization directives (`@can`, `can:manage users`).
+- **[Laravel Sanctum (^4.0)](https://laravel.com/docs/sanctum)**: Lightweight, secure API token issuance and SPA authentication with scoped capabilities and token revocation.
+
+### 🔹 Backend & Integrations
 - **PHP ^8.2**
-- **Laravel 12.x**: The core PHP web framework.
-- **[Spatie Laravel-Permission (^6.25)](https://spatie.be/docs/laravel-permission)**: Fine-grained Role-Based Access Control (Roles & Permissions management).
-- **[Laravel Sanctum (^4.0)](https://laravel.com/docs/sanctum)**: Token-based API authentication for mobile and third-party clients.
-- **[Google API Client (`google/apiclient: ^2.19`)](https://github.com/googleapis/google-api-php-client)**: Direct integration with Firebase Cloud Messaging (FCM) via HTTP v1 API using OAuth 2.0 service account credentials.
-- **Laravel Breeze**: Authentication scaffolding and session management.
+- **Laravel 12.x**: Core application framework.
+- **[Google API Client (`google/apiclient: ^2.19`)](https://github.com/googleapis/google-api-php-client)**: Direct server-to-server integration with Firebase Cloud Messaging (FCM HTTP v1 API) using Google Service Account OAuth 2.0.
 
 ### 🔹 Frontend Stack
-- **Blade Template Engine**: Dynamic and modular server-rendered templates.
-- **Tailwind CSS**: Modern utility-first CSS design system.
-- **Vite & Alpine.js**: Fast asset bundling and reactive frontend interactions.
+- **Blade Template Engine**: Modular server-rendered layouts with custom components.
+- **Tailwind CSS**: Modern, responsive utility-first styling.
+- **Vite & Alpine.js**: Reactive UI micro-interactions and lightning-fast asset bundling.
 
 ### 🔹 Architecture & Database
-- **Database**: Compatible with MySQL, PostgreSQL, and SQLite via Eloquent ORM.
-- **Service Layer Pattern**: Core business logic encapsulated in `TaskService` for maintainability and separation of concerns.
-- **Event-Driven Architecture**: Model Observers (`TaskObserver`) and custom events (`TaskAssigned`) to trigger push and database notifications automatically.
+- **Database Support**: MySQL, PostgreSQL, SQLite through Eloquent ORM.
+- **Service Layer Pattern**: Core domain logic isolated inside [`TaskService`](app/Services/TaskService.php) ensuring clean architecture and controllers.
+- **Event-Driven & Observers**: [`TaskObserver`](app/Observers/TaskObserver.php) and [`TaskAssigned`](app/Events/TaskAssigned.php) event listeners orchestrating automated logging and multi-channel notification dispatches.
 
 ---
 
 ## ✨ Key Features
 
-- 📝 **Task Management**: Create, read, update, delete (CRUD), assign to users, set priority levels, due dates, and categories.
+- 🔐 **Dual Authentication & Authorization Engine**:
+  - Web session authentication powered by **Laravel Breeze**.
+  - Token-based API authentication powered by **Laravel Sanctum**.
+  - Granular RBAC permissions (`Admin`, `Manager`, `User`) with custom access control matrices via **Spatie**.
+- 📝 **Task Management**: Full CRUD operations, assignment to team members, priority levels (`Low`, `Medium`, `High`, `Urgent`), deadline tracking, and categories.
 - ⚡ **Instant Status Toggle**: Quick inline completion status toggle (`Pending` / `Completed`).
-- 🏷️ **Categories**: Organize tasks into structured categories.
-- 👥 **User & Role Administration**: Admin dashboard to manage user accounts, assign roles (`Admin`, `Manager`, `User`), and inspect permissions.
-- 🔔 **Dual Notification System**:
-  - **In-App Database Notifications**: Notification drawer/history, mark as read, and bulk clear.
-  - **Push Notifications (Firebase FCM)**: Real-time device notifications sent automatically to assigned users.
-- 🌐 **Multi-Language Localization**: Instant interface language switching (`/lang/{locale}`).
-- 📡 **Comprehensive RESTful API**: Fully structured API endpoints with rate limiting (`throttle:api`) and JSON API Resources.
+- 🏷️ **Categorization**: Grouping and filtering tasks by project or category.
+- 👥 **User Administration**: Dedicated admin portal to inspect user activity, manage roles, and customize permissions.
+- 🔔 **Dual Notification Channels**:
+  - **Database Notifications**: Real-time in-app notification bell, notification history, mark-as-read, and bulk purge.
+  - **Push Notifications (Firebase FCM)**: Instant mobile/desktop push alerts dispatched when tasks are assigned.
+- 🌐 **Localization & Multilingual**: Dynamic runtime interface language switching (`/lang/{locale}`).
+- 📡 **Enterprise RESTful API**: Production-ready API endpoints with rate limiting (`throttle:api`), structured JSON schemas via Laravel API Resources, and token management.
 
 ---
 
 ## 🛠️ Prerequisites
 
-- **PHP** >= 8.2 with required extensions (OpenSSL, PDO, Mbstring, Tokenizer, XML, Ctype, JSON, BCMath, cURL)
+- **PHP** >= 8.2 (Extensions: OpenSSL, PDO, Mbstring, Tokenizer, XML, Ctype, JSON, BCMath, cURL)
 - **Composer** (v2+)
 - **Node.js** (v18+) & **NPM**
 - **MySQL** / MariaDB / PostgreSQL / SQLite
@@ -57,7 +63,7 @@ A robust and modern **Task Management Application** built with **Laravel 12**, f
    cd Task_Management/task
    ```
 
-2. **Install PHP and Node dependencies:**
+2. **Install Backend & Frontend Dependencies:**
    ```bash
    composer install
    npm install
@@ -69,7 +75,7 @@ A robust and modern **Task Management Application** built with **Laravel 12**, f
    php artisan key:generate
    ```
 
-4. **Set up Database Configuration in `.env`:**
+4. **Set Database Credentials in `.env`:**
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -79,7 +85,7 @@ A robust and modern **Task Management Application** built with **Laravel 12**, f
    DB_PASSWORD=
    ```
 
-5. **Run Migrations & Seeders:**
+5. **Run Migrations & Seeders (Creates Default Roles & Permissions):**
    ```bash
    php artisan migrate --seed
    ```
@@ -87,36 +93,76 @@ A robust and modern **Task Management Application** built with **Laravel 12**, f
 6. **Firebase Credentials Setup (Optional for Push Notifications):**
    - Place your Firebase service account JSON key file in `storage/app/firebase/` or configure the path in `.env`.
 
-7. **Build Frontend Assets & Start Local Server:**
+7. **Build Assets & Start Servers:**
    ```bash
    npm run dev
    php artisan serve
    ```
-   Access the app at: `http://127.0.0.1:8000`
+   Application will be available at: `http://127.0.0.1:8000`
 
 ---
 
-## 📡 RESTful API Overview
+## 📡 RESTful API Documentation & Endpoints
 
-All API routes are protected by rate limiting (`throttle:api`):
+All API endpoints are prefixed with `/api` and throttled via `throttle:api` middleware.
 
-| Method | Endpoint | Description | Auth Required |
+### 🔑 Authentication Endpoints
+
+#### 1. Login (Generate API Token)
+- **URL**: `POST /api/login`
+- **Headers**: `Accept: application/json`
+- **Body**:
+  ```json
+  {
+    "email": "user@example.com",
+    "password": "password"
+  }
+  ```
+- **Response** (`200 OK`):
+  ```json
+  {
+    "token": "1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "user@example.com"
+    }
+  }
+  ```
+
+#### 2. Logout (Revoke API Token)
+- **URL**: `POST /api/logout`
+- **Headers**: `Authorization: Bearer <TOKEN>`, `Accept: application/json`
+- **Response** (`200 OK`):
+  ```json
+  {
+    "message": "Token revoked successfully"
+  }
+  ```
+
+---
+
+### 📌 Resource Endpoints (Require `Bearer <TOKEN>`)
+
+| Method | Endpoint | Description | Protected |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/login` | Authenticate user & issue Bearer Token | ❌ No |
-| `GET` | `/api/user` | Fetch authenticated user profile | ✅ Yes (`Bearer Token`) |
-| `POST` | `/api/logout` | Revoke active access token | ✅ Yes |
-| `GET / POST` | `/api/tasks` | List or create tasks | ✅ Yes |
-| `GET / PUT / DELETE` | `/api/tasks/{id}` | Retrieve, update or delete a task | ✅ Yes |
-| `GET / POST` | `/api/categories` | List or create task categories | ✅ Yes |
-| `GET / PUT / DELETE` | `/api/categories/{id}` | Manage single category | ✅ Yes |
-| `GET` | `/api/users` | List users for assignment (Admin) | ✅ Yes |
-| `PUT` | `/api/users/{id}` | Update user details/roles | ✅ Yes |
+| `GET` | `/api/user` | Fetch authenticated user profile & roles | ✅ Yes |
+| `GET` | `/api/tasks` | Get paginated list of tasks (with filters) | ✅ Yes |
+| `POST` | `/api/tasks` | Create a new task and trigger assign notifications | ✅ Yes |
+| `GET` | `/api/tasks/{id}` | Retrieve specific task details | ✅ Yes |
+| `PUT/PATCH` | `/api/tasks/{id}` | Update existing task or change status | ✅ Yes |
+| `DELETE` | `/api/tasks/{id}` | Delete a task | ✅ Yes |
+| `GET` | `/api/categories` | List all task categories | ✅ Yes |
+| `POST` | `/api/categories` | Create a new category | ✅ Yes |
+| `GET/PUT/DELETE` | `/api/categories/{id}` | Manage category details | ✅ Yes |
+| `GET` | `/api/users` | List users for task assignment (Admin/Manager) | ✅ Yes |
+| `PUT` | `/api/users/{id}` | Update user attributes / assigned roles | ✅ Yes |
 
 ---
 
 ## 🧪 Testing
 
-Run test suites using PHPUnit:
+Run feature and unit test suites:
 ```bash
 php artisan test
 ```
