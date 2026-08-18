@@ -15,10 +15,11 @@ A robust, enterprise-grade **Task Management Application** built with **Laravel 
 - **PHP ^8.2**
 - **Laravel 12.x**: Core application framework.
 - **[Google API Client (`google/apiclient: ^2.19`)](https://github.com/googleapis/google-api-php-client)**: Direct server-to-server integration with Firebase Cloud Messaging (FCM HTTP v1 API) using Google Service Account OAuth 2.0.
+- **[Laravel Pail](https://github.com/laravel/pail)**: Real-time log tailing directly in your terminal.
 
 ### 🔹 Frontend Stack
 - **Blade Template Engine**: Modular server-rendered layouts with custom components.
-- **Tailwind CSS**: Modern, responsive utility-first styling.
+- **Bootstrap 5**: Modern, responsive component-based styling.
 - **Vite & Alpine.js**: Reactive UI micro-interactions and lightning-fast asset bundling.
 
 ### 🔹 Architecture & Database
@@ -35,7 +36,7 @@ A robust, enterprise-grade **Task Management Application** built with **Laravel 
   - Token-based API authentication powered by **Laravel Sanctum**.
   - Granular RBAC permissions (`Admin`, `Manager`, `User`) with custom access control matrices via **Spatie**.
 - 📝 **Task Management**: Full CRUD operations, assignment to team members, priority levels (`Low`, `Medium`, `High`, `Urgent`), deadline tracking, and categories.
-- ⚡ **Instant Status Toggle**: Quick inline completion status toggle (`Pending` / `Completed`).
+- ⚡ **Instant Status Toggle**: Quick circular inline status toggle (`Pending` ➡️ `In Progress` ➡️ `Review` ➡️ `Completed`).
 - 🏷️ **Categorization**: Grouping and filtering tasks by project or category.
 - 👥 **User Administration**: Dedicated admin portal to inspect user activity, manage roles, and customize permissions.
 - 🔔 **Dual Notification Channels**:
@@ -96,10 +97,16 @@ A robust, enterprise-grade **Task Management Application** built with **Laravel 
 6. **Firebase Credentials Setup (Optional for Push Notifications):**
    - Place your Firebase service account JSON key file in `storage/app/firebase/` or configure the path in `.env`.
 
-7. **Build Assets & Start Servers:**
+7. **Start Development Environment:**
+   You can start the server, Vite compiler, queue listener, and log tailing simultaneously using the custom command:
    ```bash
-   npm run dev
+   composer dev
+   ```
+   *Or run them manually:*
+   ```bash
    php artisan serve
+   php artisan queue:listen
+   npm run dev
    ```
    Application will be available at: `http://127.0.0.1:8000`
 

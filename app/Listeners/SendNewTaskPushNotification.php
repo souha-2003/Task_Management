@@ -104,7 +104,7 @@ class SendNewTaskPushNotification implements ShouldQueue
                 ])->post("https://fcm.googleapis.com/v1/projects/{$projectId}/messages:send", [
                     'message' => [
                         'token' => $deviceToken,
-                        'notification' => [
+                        'notification' => [ // هذا القسم إلزامي لإشعارات النظام
                             'title' => $title,
                             'body' => $body,
                         ],
