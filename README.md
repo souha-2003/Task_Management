@@ -114,8 +114,8 @@ All API endpoints are prefixed with `/api` and throttled via `throttle:api` midd
 - **Body**:
   ```json
   {
-    "email": "user@example.com",
-    "password": "password"
+    "email": "alex@example.com",
+    "password": "your_secure_password"
   }
   ```
 - **Response** (`200 OK`):
@@ -124,8 +124,8 @@ All API endpoints are prefixed with `/api` and throttled via `throttle:api` midd
     "token": "1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "user": {
       "id": 1,
-      "name": "Admin User",
-      "email": "user@example.com"
+      "name": "Alex Morgan",
+      "email": "alex@example.com"
     }
   }
   ```
