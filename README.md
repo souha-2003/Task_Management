@@ -85,10 +85,13 @@ A robust, enterprise-grade **Task Management Application** built with **Laravel 
    DB_PASSWORD=
    ```
 
-5. **Run Migrations & Seeders (Creates Default Roles & Permissions):**
+5. **Run Migrations & Seeders:**
    ```bash
    php artisan migrate --seed
    ```
+   > 💡 **Default Seeded Accounts:**
+   > - **Admin User**: `admin@example.com` / `password` *(Has full system & role management permissions)*
+   > - **Regular User**: `user@example.com` / `password` *(Standard user permissions)*
 
 6. **Firebase Credentials Setup (Optional for Push Notifications):**
    - Place your Firebase service account JSON key file in `storage/app/firebase/` or configure the path in `.env`.
@@ -109,13 +112,15 @@ All API endpoints are prefixed with `/api` and throttled via `throttle:api` midd
 ### 🔑 Authentication Endpoints
 
 #### 1. Login (Generate API Token)
+Authenticate using any seeded account (e.g. `admin@example.com` or `user@example.com`):
+
 - **URL**: `POST /api/login`
 - **Headers**: `Accept: application/json`
 - **Body**:
   ```json
   {
-    "email": "alex@example.com",
-    "password": "your_secure_password"
+    "email": "admin@example.com",
+    "password": "password"
   }
   ```
 - **Response** (`200 OK`):
@@ -124,8 +129,8 @@ All API endpoints are prefixed with `/api` and throttled via `throttle:api` midd
     "token": "1|xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "user": {
       "id": 1,
-      "name": "Alex Morgan",
-      "email": "alex@example.com"
+      "name": "Admin User",
+      "email": "admin@example.com"
     }
   }
   ```
