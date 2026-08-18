@@ -169,13 +169,6 @@ Authenticate using any seeded account (e.g. `admin@example.com` or `user@example
 | `GET/PUT/DELETE` | `/api/categories/{id}` | Manage category details | Yes |
 | `GET` | `/api/users` | List users for task assignment (Admin/Manager) | Yes |
 | `PUT` | `/api/users/{id}` | Update user attributes / assigned roles | Yes |
-| `GET` | `/api/notifications` | Get user's recent unread notifications | Yes |
-| `GET` | `/api/notifications/history` | Get all user's notifications (paginated) | Yes |
-| `POST` | `/api/notifications/{id}/read` | Mark a specific notification as read | Yes |
-| `POST` | `/api/notifications/read-all` | Mark all user's notifications as read | Yes |
-| `DELETE` | `/api/notifications/clear-all` | Delete all user's notifications | Yes |
-| `DELETE` | `/api/notifications/{id}` | Delete a specific notification | Yes |
-| `POST` | `/api/update-device-token` | Update FCM device token for push notifications | Yes |
 
 ---
 

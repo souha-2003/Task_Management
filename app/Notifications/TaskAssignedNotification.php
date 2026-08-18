@@ -40,24 +40,27 @@ class TaskAssignedNotification extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if ($this->creator && !$this->creator->hasRole('admin')) {
+        $creatorName = $this->creator ? $this->creator->name : 'System';
+        $isSubmittingAdmin = $this->creator && $this->creator->hasRole('admin');
+
+        if ($isSubmittingAdmin) {
             return [
                 'task_id' => $this->task->id,
-                'title_key' => 'messages.task_created_by_employee_title',
-                'body_key' => 'messages.task_created_by_employee_body',
-                'body_replace' => ['name' => $this->creator->name, 'title' => $this->task->title],
-                'title' => 'New Task from Employee!',
-                'body' => $this->creator->name . ' created a new task: ' . $this->task->title,
+                'title_key' => 'messages.task_created_by_admin_title',
+                'body_key' => 'messages.task_created_by_admin_body',
+                'body_replace' => ['title' => $this->task->title],
+                'title' => 'New Task from Admin',
+                'body' => 'Admin created a new task: ' . $this->task->title,
             ];
         }
 
         return [
             'task_id' => $this->task->id,
-            'title_key' => 'messages.new_task_notification_title',
-            'body_key' => 'messages.new_task_notification_body',
-            'body_replace' => ['title' => $this->task->title],
-            'title' => 'New Task Assigned!',
-            'body' => 'A new task has been assigned to you: ' . $this->task->title,
+            'title_key' => 'messages.task_created_by_user_title',
+            'body_key' => 'messages.task_created_by_user_body',
+            'body_replace' => ['name' => $creatorName, 'title' => $this->task->title],
+            'title' => 'New Task from ' . $creatorName,
+            'body' => $creatorName . ' created a new task: ' . $this->task->title,
         ];
     }
 }

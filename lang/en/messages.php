@@ -110,6 +110,8 @@ return [
     'no_notifications' => 'No notifications found',
     'notifications_history' => 'Notifications History',
     'view_task' => 'View Task',
-    'task_created_by_employee_title' => 'New Task from Employee!',
-    'task_created_by_employee_body' => ':name created a new task: :title',
+    'task_created_by_admin_title' => 'New Task from Admin',
+    'task_created_by_admin_body' => 'Admin created a new task: :title',
+    'task_created_by_user_title' => 'New Task from :name',
+    'task_created_by_user_body' => ':name created a new task: :title',
 ];

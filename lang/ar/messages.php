@@ -110,6 +110,8 @@ return [
     'no_notifications' => 'لا توجد إشعارات حالياً',
     'notifications_history' => 'أرشيف الإشعارات',
     'view_task' => 'عرض المهمة',
-    'task_created_by_employee_title' => 'مهمة جديدة من موظف!',
-    'task_created_by_employee_body' => 'قام :name بإضافة مهمة جديدة بعنوان: :title',
+    'task_created_by_admin_title' => 'مهمة جديدة من المدير',
+    'task_created_by_admin_body' => 'قام المدير بإضافة مهمة جديدة بعنوان: :title',
+    'task_created_by_user_title' => 'مهمة جديدة من :name',
+    'task_created_by_user_body' => 'قام :name بإضافة مهمة جديدة بعنوان: :title',
 ];
